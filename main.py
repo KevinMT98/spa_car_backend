@@ -1,4 +1,4 @@
-from ProyectoSPA.Web_API.Controllers.Cliente_controller import app
+from Web_API.Controllers.Cliente_controller import app
 
 if __name__ == "__main__":
     import uvicorn

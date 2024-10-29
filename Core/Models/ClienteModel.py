@@ -18,7 +18,9 @@ class Cliente:
         }
 
     def __str__(self):
-        return f"Cliente({self.cedula}, 
-        {self.nombre}, {self.apellido}, 
-        {self.fec_nacimiento}, {self.telefono}, 
-        {self.correo_electronico})"
+        return (
+            f"Cliente({self.cedula}, "
+            f"{self.nombre}, {self.apellido}, "
+            f"{self.fec_nacimiento}, {self.telefono}, "
+            f"{self.correo_electronico})"
+        )

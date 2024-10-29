@@ -1,8 +1,8 @@
-from ProyectoSPA.Core.Models import ClienteModel as Cliente
-from utilidades import config
+from Core.Models import ClienteModel as Cliente
+from utilidades import config 
 import csv
 
-class Clientes:
+class ClientesServices:
     lista = []
 
     @classmethod
