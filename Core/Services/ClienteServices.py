@@ -1,4 +1,4 @@
-from Core.Models import ClienteModel as Cliente
+from Core.Models.ClienteModel import Cliente
 from utilidades import config 
 import csv
 
@@ -6,13 +6,13 @@ class ClientesServices:
     lista = []
 
     @classmethod
-    def cargar_datos(self):
+    def cargar_datos(cls):
         try:
             with open(config.DATABASE_PATH, newline='\n') as df:
                 reader = csv.reader(df, delimiter=';')
-                for cedula, Nombre, apellido, Fec_nacimiento, telefono, correo_electornico in reader:
-                    cliente = Cliente(cedula, Nombre, apellido, Fec_nacimiento, telefono, correo_electornico)
-                    self.lista.append(cliente)
+                for cedula, nombre, apellido, fec_nacimiento, telefono, correo_electronico in reader:
+                    cliente = Cliente(cedula, nombre, apellido, fec_nacimiento, telefono, correo_electronico)
+                    cls.lista.append(cliente)
         except FileNotFoundError:
             print(f"Error: El archivo {config.DATABASE_PATH} no se encontró.")
         except Exception as e:
@@ -20,6 +20,7 @@ class ClientesServices:
 
     @classmethod
     def buscar(self, cedula):
+        ClientesServices.cargar_datos()
         for cliente in self.lista:
             if cliente.cedula == cedula:
                 return cliente

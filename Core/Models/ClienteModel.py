@@ -24,3 +24,5 @@ class Cliente:
             f"{self.fec_nacimiento}, {self.telefono}, "
             f"{self.correo_electronico})"
         )
+    
+    
