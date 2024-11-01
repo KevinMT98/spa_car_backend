@@ -1,4 +1,4 @@
-from Core.Models.ClienteModel import Cliente
+from Core.Models.ClienteModel import Cliente, ClienteModel
 from utilidades import config 
 import csv
 
@@ -7,6 +7,7 @@ class ClientesServices:
 
     @classmethod
     def cargar_datos(cls):
+        cls.lista.clear()
         try:
             with open(config.DATABASE_PATH, newline='\n') as df:
                 reader = csv.reader(df, delimiter=';')
@@ -27,9 +28,19 @@ class ClientesServices:
         return None
 
     @classmethod
-    def agregar(self, cliente):
-        self.lista.append(cliente)
-
+    def agregar(cls, cliente: ClienteModel):
+        cls.cargar_datos()
+        for cliente in cls.lista:
+            if cliente.cedula == cliente.cedula:
+                return f"Error: El cliente con la cédula {cliente.cedula} ya existe."
+            else:
+                with open(config.DATABASE_PATH, mode='a', newline='\n') as df:
+                    writer = csv.writer(df, delimiter=';')
+                    writer.writerow([cliente.cedula, cliente.nombre, cliente.apellido,
+                             cliente.fec_nacimiento, cliente.telefono, cliente.correo_electronico])
+                    cls.lista.append(cliente)
+                    return f"Cliente con cédula {cliente.cedula} agregado exitosamente."
+    
     @classmethod
     def actualizar(self, cliente):
         for i, c in enumerate(self.lista):

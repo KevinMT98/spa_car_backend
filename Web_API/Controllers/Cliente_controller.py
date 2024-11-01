@@ -1,9 +1,9 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 from Core.Services.ClienteServices import ClientesServices
+from Core.Models.ClienteModel import ClienteModel,Cliente
 from utilidades import config 
-
-headers = config.Headers
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -11,7 +11,7 @@ app = FastAPI()
 async def clientes():
     ClientesServices.cargar_datos()
     content = [cliente.to_dict() for cliente in ClientesServices.lista]
-    return JSONResponse(content=content,headers=config.Headers)
+    return JSONResponse(content=content, headers=config.Headers)
 
 @app.get('/clientes/buscar/{cedula}')
 async def clientes_buscar(cedula: str):
@@ -20,14 +20,14 @@ async def clientes_buscar(cedula: str):
         raise HTTPException(status_code=404, detail="Cliente no encontrado")
     return JSONResponse(content=cliente.to_dict(), headers=config.Headers)
 
-# Si decides implementar las funciones para agregar y actualizar, aquí están las bases:
-
-# @app.post("/clientes/")
-# async def clientes_agregar(cliente: BaseModel):
-#     ClientesServices.agregar(cliente)
-#     return JSONResponse(content=cliente.to_dict(), headers=headers)
+@app.post("/clientes/agregar/")
+async def clientes_agregar(cliente: ClienteModel):
+    ClientesServices.agregar(cliente)
+    if not cliente:
+        raise HTTPException(status_code=404, detail="Cliente no encontrado")
+    return JSONResponse(content=cliente.to_dict(), headers=config.Headers)
 
 # @app.put("/clientes/")
 # async def clientes_actualizar(cliente: BaseModel):
 #     ClientesServices.actualizar(cliente)
-#     return JSONResponse(content=cliente.to_dict(), headers=headers)
+#     return JSONResponse(content=cliente.to_dict(), headers=config.Headers)

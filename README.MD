@@ -8,34 +8,52 @@ Este proyecto es una API web para gestionar clientes de un servicio de SPA para 
 - `ClienteModel.py`: Define el modelo de datos para los clientes.
 - `ClienteServices.py`: Contiene los servicios para gestionar los datos de los clientes.
 - `config.py`: Archivo de configuración que contiene rutas y otros parámetros de configuración.
-- `utilidades.py`: Utilidades varias que pueden ser usadas en diferentes partes del proyecto.
+- `utilidades.py`: Utilidades varias que ayudan en diferentes tareas del proyecto.
+- `Web_API/Controllers/Cliente_controller.py`: Controlador que maneja las rutas y las solicitudes relacionadas con los clientes.
+- `DbContext/clientes.csv`: Archivo CSV que almacena los datos de los clientes.
+
+## Requisitos
+
+- Python 3.8 o superior
+- pip (gestor de paquetes de Python)
 
 ## Instalación
 
 1. Clona el repositorio:
-    ```bash
-    git clone https://github.com/tu_usuario/spa_car_backend.git
+
+    ```sh
+    git clone https://github.com/tu-usuario/tu-repositorio.git
     cd spa_car_backend
     ```
 
-2. Crea un entorno virtual y actívalo:
-    ```bash
+2. Crea y activa un entorno virtual:
+
+    ```sh
     python -m venv venv
-    .\venv\Scripts\activate  # En Windows
-    source venv/bin/activate  # En Unix o MacOS
+    venv\Scripts\activate  # En Windows
+    # source venv/bin/activate  # En macOS y Linux
     ```
 
 3. Instala las dependencias:
-    ```bash
+
+    ```sh
     pip install -r requirements.txt
     ```
 
-## Ejecución
+## Uso
 
-Para ejecutar la aplicación, usa el siguiente comando:
-```bash
-python -m uvicorn main:app --reload
-```
+1. Ejecuta la aplicación:
+
+    ```sh
+    uvicorn main:app --reload
+    ```
+
+2. La API estará disponible en `http://127.0.0.1:8001`.
+
+## Endpoints
+
+- `GET /clientes/{cliente_id}`: Obtiene la información de un cliente por su ID.
+- `POST /clientes/agregar/`: Agrega un nuevo cliente.
 
 ## Archivos Principales
 
@@ -117,11 +135,10 @@ if __name__ == "__main__":
 Define las configuraciones necesarias para el proyecto, como la ruta a la base de datos.
 
 ```python
-DATABASE_PATH = 'ruta/a/tu/base_de_datos.csv'
+DATABASE_PATH = r'C:\ProyectoSPA\spa_car_backend\DbContext\clientes.csv'
+Headers = {"Content-Type": "application/json, charset=utf-8"}
 ```
 
 ## Contribuciones
 
 Las contribuciones son bienvenidas. Por favor, abre un issue o un pull request para discutir cualquier cambio que te gustaría hacer.
-
-
