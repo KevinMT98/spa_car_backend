@@ -46,7 +46,18 @@ class ClientesServices:
         return f"Cliente {cliente.nombre} {cliente.apellido} agregado exitosamente."
     
     @classmethod
-    def actualizar(cls, cliente):
+    def actualizar(cls, cliente: ClienteModel):
+        cls.cargar_datos()
         for i, c in enumerate(cls.lista):
             if c.cedula == cliente.cedula:
                 cls.lista[i] = cliente
+                try:
+                    with open(config.DATABASE_PATH, mode='w', newline='\n') as df:
+                        writer = csv.writer(df, delimiter=';')
+                        for cliente in cls.lista:
+                            writer.writerow([cliente.cedula, cliente.nombre, cliente.apellido,
+                                             cliente.fec_nacimiento, cliente.telefono, cliente.correo_electronico])
+                    return f"Cliente {cliente.nombre} {cliente.apellido} actualizado exitosamente."
+                except Exception as e:
+                    return f"Error al escribir en el archivo: {e}"
+        return f"Error: El cliente con la cédula {cliente.cedula} no existe."

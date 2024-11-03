@@ -27,7 +27,9 @@ async def clientes_agregar(cliente: ClienteModel):
         raise HTTPException(status_code=400, detail=resultado)
     return JSONResponse(content={"mensaje": resultado}, headers=config.Headers)
 
-# @app.put("/clientes/")
-# async def clientes_actualizar(cliente: BaseModel):
-#     ClientesServices.actualizar(cliente)
-#     return JSONResponse(content=cliente.to_dict(), headers=config.Headers)
+@app.put("/clientes/actualizar/")
+async def clientes_actualizar(cliente: ClienteModel):
+    resultado = ClientesServices.actualizar(cliente)
+    if "Error" in resultado:
+        raise HTTPException(status_code=400, detail=resultado)
+    return JSONResponse(content={"mensaje": resultado}, headers=config.Headers)

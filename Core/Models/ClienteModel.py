@@ -21,13 +21,13 @@ class ClienteModel(BaseModel):
         return correo_electronico
     
     @field_validator("fec_nacimiento")
-    def parse_fecha_nacimiento(cls, value):
-        if isinstance(value, str):
+    def parse_fecha_nacimiento(cls, fec_nacimiento):
+        if isinstance(fec_nacimiento, str):
             try:
-                return datetime.strptime(value, "%Y-%m-%D").date()
+                return datetime.strptime(fec_nacimiento, "%Y-%m-%D").date()
             except ValueError:
                 raise ValueError("La fecha de nacimiento debe tener el formato YYYY-MM-DD.")
-        return value
+        return fec_nacimiento
 
     @field_validator("fec_nacimiento")
     def fecha_nacimiento_valida(cls, fec_nacimiento):
