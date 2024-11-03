@@ -22,10 +22,10 @@ async def clientes_buscar(cedula: str):
 
 @app.post("/clientes/agregar/")
 async def clientes_agregar(cliente: ClienteModel):
-    ClientesServices.agregar(cliente)
-    if not cliente:
-        raise HTTPException(status_code=404, detail="Cliente no encontrado")
-    return JSONResponse(content=cliente.to_dict(), headers=config.Headers)
+    resultado = ClientesServices.agregar(cliente)
+    if "Error" in resultado:
+        raise HTTPException(status_code=400, detail=resultado)
+    return JSONResponse(content={"mensaje": resultado}, headers=config.Headers)
 
 # @app.put("/clientes/")
 # async def clientes_actualizar(cliente: BaseModel):

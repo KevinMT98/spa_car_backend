@@ -1,5 +1,6 @@
-from pydantic import BaseModel, Field
-from datetime import date 
+from pydantic import BaseModel, Field, field_validator
+from datetime import date, datetime
+import re
 
 class ClienteModel(BaseModel):
     cedula: str = Field(..., min_length=3, max_length=10)
@@ -8,6 +9,32 @@ class ClienteModel(BaseModel):
     fec_nacimiento: date
     telefono: str
     correo_electronico: str
+    
+    @field_validator("correo_electronico")
+    def correo_electronico_valido(cls, correo_electronico):
+        # Expresión regular para validar el correo electrónico
+        pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+        if not re.match(pattern, correo_electronico):
+            raise ValueError("Correo electrónico inválido.")
+        if not (correo_electronico.endswith('.com') or correo_electronico.endswith('.co')):
+            raise ValueError("El correo electrónico debe terminar con (.com) o (.co)")
+        return correo_electronico
+    
+    @field_validator("fec_nacimiento")
+    def parse_fecha_nacimiento(cls, value):
+        if isinstance(value, str):
+            try:
+                return datetime.strptime(value, "%Y-%m-%D").date()
+            except ValueError:
+                raise ValueError("La fecha de nacimiento debe tener el formato YYYY-MM-DD.")
+        return value
+
+    @field_validator("fec_nacimiento")
+    def fecha_nacimiento_valida(cls, fec_nacimiento):
+        if fec_nacimiento > date.today():
+            raise ValueError("La fecha de nacimiento no puede ser mayor a la fecha actual.")
+        return fec_nacimiento    
+        
 
     def to_dict(self):
         return {
