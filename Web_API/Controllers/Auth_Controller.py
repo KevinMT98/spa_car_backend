@@ -16,6 +16,6 @@ async def registrar_usuario(user: UserModel):
 @router.post("/usuario/login/", tags=["Usuarios"])
 async def login(username: str, password: str):
     if AuthService.verificar_credenciales(username, password):
-        return JSONResponse(content={"mensaje": "Login exitoso"}, headers=config.Headers)
+        return JSONResponse(content={"mensaje": "Ingreso exitoso"}, headers=config.Headers)
     else:
-        raise HTTPException(status_code=401, detail="Credenciales inválidas")
+        raise HTTPException(status_code=401, detail="Usuario o contraseña invalida")
