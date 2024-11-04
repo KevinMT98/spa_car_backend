@@ -13,7 +13,7 @@ class AuthService:
             with open(config.USERS_DB_PATH, newline='\n') as df:
                 reader = csv.reader(df, delimiter=';')
                 for username, password, rol in reader:
-                    user = UserModel(username=username, password=password, rol=rol)
+                    user = UserModel(username=username.upper(), password=password, rol=rol)
                     cls.users.append(user)
         except FileNotFoundError:
             print(f"Error: El archivo {config.USERS_DB_PATH} no se encontró.")
@@ -22,6 +22,7 @@ class AuthService:
 
     @classmethod
     def registrar_usuario(cls, user: UserModel):
+        user.username = user.username.upper()
         cls.cargar_usuarios()
         for u in cls.users:
             if u.username == user.username:
@@ -42,6 +43,7 @@ class AuthService:
 
     @classmethod
     def verificar_credenciales(cls, username: str, password: str):
+        username = username.upper()
         cls.cargar_usuarios()
         hashed_password = hashlib.sha256(password.encode()).hexdigest()
         for user in cls.users:

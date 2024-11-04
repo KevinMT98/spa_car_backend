@@ -1,6 +1,6 @@
-import csv
-from Core.Models.VehiculoModel import VehiculoModel
+from Core.Models.VehiculoModel import VehiculoModel,Vehiculo
 from utilidades import config
+import csv
 
 class VehiculoServices:
     lista = []
@@ -11,15 +11,15 @@ class VehiculoServices:
         try:
             with open(config.VEHICULOS_DB_PATH, newline='\n') as df:
                 reader = csv.reader(df, delimiter=';')
-                for row in reader:
-                    vehiculo = VehiculoModel(
-                        id_vehiculo=row[0],
-                        tipo_vehiculo=row[1],
-                        marca=row[2],
-                        modelo=row[3],
-                        cilindrada=int(row[4]),
-                        tipo=row[5],
-                        cedula_cliente=row[6]
+                for id_vehiculo, tipo_vehiculo, marca, modelo, cilindrada, tipo, cedula_cliente in reader:
+                    vehiculo = Vehiculo(
+                        id_vehiculo=id_vehiculo,
+                        tipo_vehiculo=tipo_vehiculo,
+                        marca=marca,
+                        modelo=modelo,
+                        cilindrada=int(cilindrada),
+                        tipo=tipo,
+                        cedula_cliente=cedula_cliente
                     )
                     cls.lista.append(vehiculo)
         except FileNotFoundError:
@@ -30,6 +30,7 @@ class VehiculoServices:
     @classmethod
     def agregar(cls, vehiculo: VehiculoModel):
         cls.cargar_datos()
+        vehiculo.id_vehiculo = vehiculo.id_vehiculo.upper()
         for v in cls.lista:
             if v.id_vehiculo == vehiculo.id_vehiculo:
                 return f"Error: El vehículo con la placa {vehiculo.id_vehiculo} ya existe."
@@ -78,6 +79,7 @@ class VehiculoServices:
 
     @classmethod
     def eliminar(cls, id_vehiculo: str):
+        id_vehiculo = id_vehiculo.upper()
         cls.cargar_datos()
         for i, v in enumerate(cls.lista):
             if v.id_vehiculo == id_vehiculo:
@@ -103,6 +105,7 @@ class VehiculoServices:
     @classmethod
     def buscar(cls, id_vehiculo: str):
         cls.cargar_datos()
+        id_vehiculo = id_vehiculo.upper()
         for vehiculo in cls.lista:
             if vehiculo.id_vehiculo == id_vehiculo:
                 return vehiculo

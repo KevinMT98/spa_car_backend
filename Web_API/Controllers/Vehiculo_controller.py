@@ -9,7 +9,7 @@ router = APIRouter()
 @router.get("/", tags=["Vehículos"])
 async def obtener_vehiculos():
     VehiculoServices.cargar_datos()
-    content = [vehiculo.dict() for vehiculo in VehiculoServices.lista]
+    content = [vehiculo.to_dict() for vehiculo in VehiculoServices.lista]
     return JSONResponse(content=content, headers=config.Headers)
 
 @router.get('/buscar/{id_vehiculo}', tags=["Vehículos"])
@@ -17,7 +17,7 @@ async def buscar_vehiculo(id_vehiculo: str):
     vehiculo = VehiculoServices.buscar(id_vehiculo=id_vehiculo)
     if not vehiculo:
         raise HTTPException(status_code=404, detail="Vehículo no encontrado")
-    return JSONResponse(content=vehiculo.dict(), headers=config.Headers)
+    return JSONResponse(content=vehiculo.to_dict(), headers=config.Headers)
 
 @router.post("/agregar/", tags=["Vehículos"])
 async def agregar_vehiculo(vehiculo: VehiculoModel):
