@@ -1,7 +1,7 @@
 from Core.Models.ClienteModel import Cliente, ClienteModel
 from utilidades import config 
 import csv
-
+#
 class ClientesServices:
     lista = []
 

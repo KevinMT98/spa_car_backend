@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Literal
+from typing import Literal#
 
 class VehiculoModel(BaseModel):
     id_vehiculo: str = Field(..., min_length=3, max_length=10, alias="placa")

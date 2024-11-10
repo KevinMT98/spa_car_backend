@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from Web_API.Controllers.Cliente_controller import router as cliente_router
 from Web_API.Controllers.Auth_Controller import router as auth_router
 from Web_API.Controllers.Vehiculo_controller import router as vehiculo_router
+from Web_API.Controllers.Servicio_controller import router as servicio_router
+#
 
 app = FastAPI(
     title="API de Gestión de Clientes, Vehículos y Autenticación",
@@ -12,6 +14,7 @@ app = FastAPI(
 app.include_router(cliente_router, prefix="/clientes", tags=["Clientes"])
 app.include_router(auth_router, prefix="/auth", tags=["Usuarios"])
 app.include_router(vehiculo_router, prefix="/vehiculos", tags=["Vehículos"])
+app.include_router(servicio_router, prefix="/servicios", tags=["Servicios"])
 
 if __name__ == "__main__":
     import uvicorn
