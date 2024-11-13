@@ -11,6 +11,38 @@ Este proyecto es una API web para gestionar clientes de un servicio de SPA para 
 - `utilidades.py`: Utilidades varias que ayudan en diferentes tareas del proyecto.
 - `Web_API/Controllers/Cliente_controller.py`: Controlador que maneja las rutas y las solicitudes relacionadas con los clientes.
 - `DbContext/clientes.csv`: Archivo CSV que almacena los datos de los clientes.
+- `tests/`: Directorio que contiene las pruebas del proyecto.
+- `Web_API/Controllers/`: Directorio que contiene los controladores de la API.
+- `Core/Models/`: Directorio que contiene los modelos de datos.
+- `Core/Models/VehiculoModel.py`: Define el modelo de datos para los vehículos.
+- `Core/Models/UserModel.py`: Define el modelo de datos para los usuarios.
+- `Core/Models/ServicioModel.py`: Define el modelo de datos para los servicios.
+
+## Modelos de Datos
+
+### Vehículo
+El modelo Vehículo representa los autos que ingresan al SPA:
+- placa: Identificador único del vehículo
+- marca: Marca del vehículo
+- modelo: Modelo del vehículo
+- año: Año de fabricación
+- color: Color del vehículo
+- propietario_id: ID del cliente propietario
+
+### Servicio
+Representa los servicios disponibles en el SPA:
+- id: Identificador único del servicio
+- nombre: Nombre del servicio
+- descripcion: Descripción detallada
+- precio: Costo del servicio
+- duracion: Tiempo estimado del servicio
+
+### Usuario
+Define los usuarios del sistema:
+- id: Identificador único
+- username: Nombre de usuario
+- rol: Rol en el sistema (admin/operador)
+- estado: Estado del usuario (activo/inactivo)
 
 ## Requisitos
 
@@ -54,6 +86,38 @@ Este proyecto es una API web para gestionar clientes de un servicio de SPA para 
 
 - `GET /clientes/{cliente_id}`: Obtiene la información de un cliente por su ID.
 - `POST /clientes/agregar/`: Agrega un nuevo cliente.
+- `PUT /clientes/actualizar/{cliente_id}`: Actualiza la información de un cliente existente.
+- `DELETE /clientes/eliminar/{cliente_id}`: Elimina un cliente por su ID.
+
+## Endpoints Adicionales
+
+### Vehículos
+- `GET /vehiculos/`: Lista todos los vehículos
+- `GET /vehiculos/{placa}`: Obtiene un vehículo específico
+- `POST /vehiculos/`: Registra un nuevo vehículo
+- `PUT /vehiculos/{placa}`: Actualiza información del vehículo
+- `DELETE /vehiculos/{placa}`: Elimina un vehículo
+
+### Servicios
+- `GET /servicios/`: Lista todos los servicios disponibles
+- `GET /servicios/{id}`: Obtiene detalles de un servicio
+- `POST /servicios/`: Crea un nuevo servicio
+- `PUT /servicios/{id}`: Actualiza un servicio
+- `DELETE /servicios/{id}`: Elimina un servicio
+
+### Usuarios
+- `POST /usuarios/login`: Autenticación de usuarios
+- `POST /usuarios/registro`: Registro de nuevos usuarios
+- `PUT /usuarios/{id}`: Actualización de datos de usuario
+- `GET /usuarios/perfil`: Obtiene el perfil del usuario actual
+
+## Manejo de Errores
+
+La API maneja diferentes tipos de errores y devuelve respuestas adecuadas:
+
+- `404 Not Found`: Cuando no se encuentra un cliente con el ID proporcionado.
+- `400 Bad Request`: Cuando los datos proporcionados en la solicitud no son válidos.
+- `500 Internal Server Error`: Cuando ocurre un error inesperado en el servidor.
 
 ## Archivos Principales
 
@@ -139,6 +203,15 @@ DATABASE_PATH = r'C:\ProyectoSPA\spa_car_backend\DbContext\clientes.csv'
 Headers = {"Content-Type": "application/json, charset=utf-8"}
 ```
 
+## Seguridad
+- Autenticación mediante JWT (JSON Web Tokens)
+- Roles y permisos configurables
+- Encriptación de contraseñas con bcrypt
+- Validación de datos en todas las peticiones
+
+## Configuración Avanzada
+
+### Variables de Entorno
+
 ## Contribuciones
 
-Las contribuciones son bienvenidas. Por favor, abre un issue o un pull request para discutir cualquier cambio que te gustaría hacer.
