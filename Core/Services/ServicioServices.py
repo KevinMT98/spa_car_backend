@@ -12,13 +12,13 @@ class ServiciosServices:
         try:
             with open(config.SERVICIOS_DB_PATH, newline='\n') as df:
                 reader = csv.reader(df, delimiter=';')
-                for id_servicio, nombre, descripcion, precio_base, tipo_vehiculo, descuento, precio_variable in reader:
+                for id_servicio, nombre, descripcion, precio_base, segmento, descuento, precio_variable in reader:
                     servicio = Servicio(
                         id_servicio, 
                         nombre, 
                         descripcion, 
                         Decimal(precio_base), 
-                        tipo_vehiculo, 
+                        segmento, 
                         Decimal(descuento),
                         precio_variable.lower() == 'true'
                     )
@@ -37,9 +37,9 @@ class ServiciosServices:
         return None
     
     @classmethod
-    def buscar_por_tipo_vehiculo(cls, tipo_vehiculo: str):
+    def buscar_por_segmento(cls, segmento: str):
         cls.cargar_datos()
-        return [servicio for servicio in cls.lista if servicio.tipo_vehiculo == tipo_vehiculo]
+        return [servicio for servicio in cls.lista if servicio.segmento == segmento]
 
     @classmethod
     def agregar(cls, servicio: ServicioModel):
@@ -56,7 +56,7 @@ class ServiciosServices:
                     servicio.nombre, 
                     servicio.descripcion,
                     servicio.precio_base,
-                    servicio.tipo_vehiculo,
+                    servicio.segmento,
                     servicio.descuento,
                     servicio.precio_variable
                 ])
@@ -81,7 +81,7 @@ class ServiciosServices:
                                 s.nombre, 
                                 s.descripcion,
                                 str(s.precio_base),
-                                s.tipo_vehiculo,
+                                s.segmento,
                                 str(s.descuento),
                                 str(s.precio_variable)
                             ])
@@ -105,7 +105,7 @@ class ServiciosServices:
                                 s.nombre, 
                                 s.descripcion,
                                 str(s.precio_base),
-                                s.tipo_vehiculo,
+                                s.segmento,
                                 str(s.descuento),
                                 str(s.precio_variable)
                             ])

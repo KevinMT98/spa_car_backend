@@ -1,8 +1,10 @@
 from pydantic import BaseModel, Field, field_validator
 import re
 
-class UserModel(BaseModel):#
-    username: str = Field(..., min_length=3, max_length=50)
+class UserModel(BaseModel):
+    usuario: str = Field(..., min_length=3, max_length=50)
+    name: str = Field(..., min_length=3, max_length=50)
+    lastname: str = Field(..., min_length=3, max_length=50)
     password: str = Field(..., min_length=6)
     rol: str = Field(..., min_length=3, max_length=50)
     

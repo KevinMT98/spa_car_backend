@@ -1,0 +1,13 @@
+{
+    "empresa": {
+      "nombre": "string",
+      "nit": "string",
+      "telefono": "string",
+      "direccion": "string",
+      "logo": "string"
+    },
+    "tema": {
+      "primario": "string",
+      "secondario": "string"
+    }
+  }

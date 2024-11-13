@@ -1,24 +1,28 @@
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator,EmailStr
 from datetime import date, datetime
+from typing import Literal
 import re
 
 class ClienteModel(BaseModel):
-    cedula: str = Field(..., min_length=3, max_length=10)
-    nombre: str
-    apellido: str
-    fec_nacimiento: date
-    telefono: str
-    correo_electronico: str
     
-    @field_validator("correo_electronico")
-    def correo_electronico_valido(cls, correo_electronico):
-        # Expresión regular para validar el correo electrónico
+    tipo_doc: Literal["CC","NIT","CE","PP","TI"]     
+    documento: str = Field(..., min_length=3, max_length=15)
+    nombre: str = Field(..., min_length=1, max_length=50)
+    apellido: str = Field(..., min_length=1, max_length=50)
+    fec_nacimiento: date
+    telefono: str = Field(..., min_length=7, max_length=15)
+    email: EmailStr
+
+   
+    @field_validator("email")
+    def email_valido(cls, email):
         pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-        if not re.match(pattern, correo_electronico):
+        if not re.match(pattern, email):
             raise ValueError("Correo electrónico inválido.")
-        if not (correo_electronico.endswith('.com') or correo_electronico.endswith('.co')):
-            raise ValueError("El correo electrónico debe terminar con (.com) o (.co)")
-        return correo_electronico
+        if not (email.endswith(('.com', '.co', '.edu', '.org')) or email.endswith(('.COM', '.CO', '.EDU', '.ORG'))):
+            raise ValueError("El correo electrónico debe terminar con (.com), (.co), (.edu) o (.org)")
+        return email
+
     
     @field_validator("fec_nacimiento")
     def parse_fecha_nacimiento(cls, fec_nacimiento):
@@ -35,51 +39,52 @@ class ClienteModel(BaseModel):
             raise ValueError("La fecha de nacimiento no puede ser mayor a la fecha actual.")
         return fec_nacimiento    
         
-
     def to_dict(self):
         return {
-            "cedula": self.cedula,
-            "nombre": self.nombre,
-            "apellido": self.apellido,
-            "fec_nacimiento": self.fec_nacimiento.isoformat(),
-            "telefono": self.telefono,
-            "correo_electronico": self.correo_electronico
+            "Tipo de documento": self.tipo_doc,
+            "Documento": self.documento,
+            "Nombre": self.nombre,
+            "Apellido": self.apellido,
+            "Fecha nacimiento": self.fec_nacimiento.isoformat(),
+            "Telefono": self.telefono,
+            "Email": self.email
         }
         
     def __str__(self):
         return (
-            f"Cliente({self.cedula}, "
+            f"Cliente({self.documento}, "
             f"{self.nombre}, {self.apellido}, "
             f"{self.fec_nacimiento}, {self.telefono}, "
-            f"{self.correo_electronico})"
+            f"{self.email})"
         )
     
-
 class Cliente:
-    def __init__(self, cedula, nombre, apellido, fec_nacimiento, telefono, correo_electronico):
-        self.cedula = cedula
+    def __init__(self,tipo_doc,documento,nombre,apellido,fec_nacimiento,telefono,email):
+        self.tipo_doc = tipo_doc
+        self.documento = documento
         self.nombre = nombre
         self.apellido = apellido
         self.fec_nacimiento = fec_nacimiento
         self.telefono = telefono
-        self.correo_electronico = correo_electronico
-
+        self.email = email
+        
     def to_dict(self):
         return {
-            "cedula": self.cedula,
-            "nombre": self.nombre,
-            "apellido": self.apellido,
-            "fec_nacimiento": self.fec_nacimiento,
-            "telefono": self.telefono,
-            "correo_electronico": self.correo_electronico
+            "Tipo de documento": self.tipo_doc,
+            "Documento": self.documento,
+            "Nombre": self.nombre,
+            "Apellido": self.apellido,
+            "Fecha nacimiento": self.fec_nacimiento,
+            "Telefono": self.telefono,
+            "Email": self.email
         }
 
     def __str__(self):
         return (
-            f"Cliente({self.cedula}, "
+            f"Cliente({self.documento}, "
             f"{self.nombre}, {self.apellido}, "
             f"{self.fec_nacimiento}, {self.telefono}, "
-            f"{self.correo_electronico})"
+            f"{self.email})"
         )
     
     

@@ -7,7 +7,7 @@ class ServicioModel(BaseModel):
     nombre: str = Field(..., min_length=3, max_length=100)
     descripcion: str = Field(..., min_length=10, max_length=500)
     precio_base: Decimal = Field(..., gt=0)
-    tipo_vehiculo: Literal["Moto", "Auto", "Cuatrimoto"]
+    segmento: Literal["Moto", "Auto", "Cuatrimoto"]
     descuento: Decimal = Field(0, ge=0, le=100)  # Porcentaje de descuento
     precio_variable: bool = Field(default=False)  # True si el precio varía según cilindrada
     
@@ -22,12 +22,12 @@ class ServicioModel(BaseModel):
         
         # Ajuste por cilindrada si el precio es variable
         if self.precio_variable and cilindrada > 0:
-            if self.tipo_vehiculo == "Moto":
+            if self.segmento == "Moto":
                 if cilindrada > 600:
                     precio *= Decimal('1.3')
                 elif cilindrada > 300:
                     precio *= Decimal('1.15')
-            elif self.tipo_vehiculo in ["Auto", "Cuatrimoto"]:
+            elif self.segmento in ["Auto", "Cuatrimoto"]:
                 if cilindrada > 2000:
                     precio *= Decimal('1.4')
                 elif cilindrada > 1600:
@@ -45,19 +45,19 @@ class ServicioModel(BaseModel):
             "nombre": self.nombre,
             "descripcion": self.descripcion,
             "precio_base": str(self.precio_base),
-            "tipo_vehiculo": self.tipo_vehiculo,
+            "segmento": self.segmento,
             "descuento": str(self.descuento),
             "precio_variable": self.precio_variable
         }
 
 class Servicio:
     def __init__(self, id_servicio: str, nombre: str, descripcion: str, precio_base: Decimal, 
-                 tipo_vehiculo: str, descuento: Decimal, precio_variable: bool):
+                 segmento: str, descuento: Decimal, precio_variable: bool):
         self.id_servicio = id_servicio
         self.nombre = nombre
         self.descripcion = descripcion
         self.precio_base = precio_base
-        self.tipo_vehiculo = tipo_vehiculo
+        self.segmento = segmento
         self.descuento = descuento
         self.precio_variable = precio_variable
     
@@ -67,7 +67,7 @@ class Servicio:
             "nombre": self.nombre,
             "descripcion": self.descripcion,
             "precio_base": str(self.precio_base),
-            "tipo_vehiculo": self.tipo_vehiculo,
+            "segmento": self.segmento,
             "descuento": str(self.descuento),
             "precio_variable": self.precio_variable
         }

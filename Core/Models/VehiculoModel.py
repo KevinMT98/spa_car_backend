@@ -1,44 +1,50 @@
 from pydantic import BaseModel, Field
-from typing import Literal#
+from typing import Literal, Optional
 
 class VehiculoModel(BaseModel):
-    id_vehiculo: str = Field(..., min_length=3, max_length=10, alias="placa")
-    cedula_cliente: str = Field(..., min_length=3, max_length=10)
-    tipo_vehiculo: Literal["Moto", "Auto", "Cuatrimoto"]
-    marca: str = Field(..., min_length=2, max_length=50)
-    modelo: str = Field(..., min_length=1, max_length=50)
-    cilindrada: int = Field(..., gt=0)
-    tipo: Literal["Sport", "Naked", "Camioneta", "Automóvil", "Touring", "Otro"]
+    placa: str = Field(..., min_length=3, max_length=10, alias="Placa")
+    documento_cliente: str = Field(..., min_length=3, max_length=10,alias="Documento cliente")
+    segmento: Literal["Moto", "Auto", "Cuatrimoto"] = Field(..., min_length=2, max_length=50,alias="Segmento")
+    marca: str = Field(..., min_length=2, max_length=50,alias="Marca")
+    linea: Optional[str] = Field (None ,alias="Linea")
+    modelo: Optional[str] = Field (None ,alias="Modelo")
+    cilindrada: int = Field(..., gt=0,alias="Cilindrada")
+    tipo: Literal["Sport", "Naked", "Camioneta", 
+                  "Automóvil", "Touring", "Otro," 
+                  "No aplica"] = Field(..., min_length=2, max_length=50,alias="Tipo")
     
     def to_dict(self):
         return {
-            "id_vehiculo": self.id_vehiculo,
-            "cedula_cliente": self.cedula_cliente,
-            "tipo_vehiculo": self.tipo_vehiculo,
-            "marca": self.marca,
-            "modelo": self.modelo,
-            "cilindrada": self.cilindrada,
-            "tipo": self.tipo
+            "Placa": self.placa,
+            "Documento cliente": self.documento_cliente,
+            "Segmento": self.segmento,
+            "Marca": self.marca,
+            "Linea": self.linea,
+            "Modelo": self.modelo,
+            "Cilindrada": self.cilindrada,
+            "Tipo": self.tipo
             }
 
 class Vehiculo:
-    def __init__(self, id_vehiculo, cedula_cliente, tipo_vehiculo, marca, modelo, cilindrada, tipo):
-        self.id_vehiculo = id_vehiculo
-        self.cedula_cliente = cedula_cliente
-        self.tipo_vehiculo = tipo_vehiculo
+    def __init__(self, placa, documento_cliente, segmento, marca,linea, modelo, cilindrada, tipo):
+        self.placa = placa
+        self.documento_cliente = documento_cliente
+        self.segmento = segmento
         self.marca = marca
+        self.linea = linea
         self.modelo = modelo
         self.cilindrada = cilindrada
         self.tipo = tipo
         
     def to_dict(self):
         return {
-            "id_vehiculo": self.id_vehiculo,
-            "cedula_cliente": self.cedula_cliente,
-            "tipo_vehiculo": self.tipo_vehiculo,
-            "marca": self.marca,
-            "modelo": self.modelo,
-            "cilindrada": self.cilindrada,
-            "tipo": self.tipo
+            "Placa": self.placa,
+            "Documento cliente": self.documento_cliente,
+            "Segmento": self.segmento,
+            "Marca": self.marca,
+            "Linea": self.linea,
+            "Modelo": self.modelo,
+            "Cilindrada": self.cilindrada,
+            "Tipo": self.tipo
         }
     

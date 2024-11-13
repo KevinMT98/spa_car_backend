@@ -19,9 +19,9 @@ async def servicios_buscar(id_servicio: str):
         raise HTTPException(status_code=404, detail="Servicio no encontrado")
     return JSONResponse(content=servicio.to_dict(), headers=config.Headers)
 
-@router.get('/tipo/{tipo_vehiculo}', tags=["Servicios"])
-async def servicios_por_tipo(tipo_vehiculo: str):
-    servicios = ServiciosServices.buscar_por_tipo_vehiculo(tipo_vehiculo)
+@router.get('/tipo/{segmento}', tags=["Servicios"])
+async def servicios_por_tipo(segmento: str):
+    servicios = ServiciosServices.buscar_por_segmento(segmento)
     content = [servicio.to_dict() for servicio in servicios]
     return JSONResponse(content=content, headers=config.Headers)
 

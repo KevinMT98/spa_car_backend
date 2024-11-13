@@ -63,22 +63,22 @@ Define la clase `Cliente` que representa a un cliente del servicio de SPA para a
 
 ```python
 class Cliente:
-    def __init__(self, cedula, nombre, apellido, fec_nacimiento, telefono, correo_electronico):
-        self.cedula = cedula
+    def __init__(self, documento, nombre, apellido, fec_nacimiento, telefono, email):
+        self.documento = documento
         self.nombre = nombre
         self.apellido = apellido
         self.fec_nacimiento = fec_nacimiento
         self.telefono = telefono
-        self.correo_electronico = correo_electronico
+        self.email = email
 
     def to_dict(self):
         return {
-            "cedula": self.cedula,
+            "documento": self.documento,
             "nombre": self.nombre,
             "apellido": self.apellido,
             "fec_nacimiento": self.fec_nacimiento,
             "telefono": self.telefono,
-            "correo_electronico": self.correo_electronico
+            "email": self.email
         }
 ```
 
@@ -99,8 +99,8 @@ class ClientesServices:
         try:
             with open(config.DATABASE_PATH, newline='\n') as df:
                 reader = csv.reader(df, delimiter=';')
-                for cedula, nombre, apellido, fec_nacimiento, telefono, correo_electronico in reader:
-                    cliente = Cliente(cedula, nombre, apellido, fec_nacimiento, telefono, correo_electronico)
+                for documento, nombre, apellido, fec_nacimiento, telefono, email in reader:
+                    cliente = Cliente(documento, nombre, apellido, fec_nacimiento, telefono, email)
                     cls.lista.append(cliente)
         except FileNotFoundError:
             print(f"Error: El archivo {config.DATABASE_PATH} no se encontró.")
@@ -108,10 +108,10 @@ class ClientesServices:
             print(f"Error al leer el archivo: {e}")
 
     @classmethod
-    def buscar(self, cedula):
+    def buscar(self, documento):
         ClientesServices.cargar_datos()
         for cliente in self.lista:
-            if cliente.cedula == cedula:
+            if cliente.documento == documento:
                 return cliente
         return None
 ```
