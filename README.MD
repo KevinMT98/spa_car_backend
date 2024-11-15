@@ -40,7 +40,7 @@ Representa los servicios disponibles en el SPA:
 ### Usuario
 Define los usuarios del sistema:
 - id: Identificador único
-- username: Nombre de usuario
+- usuario: Nombre de usuario
 - rol: Rol en el sistema (admin/operador)
 - estado: Estado del usuario (activo/inactivo)
 
@@ -110,6 +110,11 @@ Define los usuarios del sistema:
 - `POST /usuarios/registro`: Registro de nuevos usuarios
 - `PUT /usuarios/{id}`: Actualización de datos de usuario
 - `GET /usuarios/perfil`: Obtiene el perfil del usuario actual
+
+### Configuración
+- `GET /config/`: Obtiene la configuración actual del sistema
+- `PATCH /config/`: Actualiza parcialmente la configuración
+- `PUT /config/reset`: Restaura la configuración por defecto
 
 ## Manejo de Errores
 
@@ -187,7 +192,7 @@ Punto de entrada de la aplicación.
 ```python
 from Web_API.Controllers.Cliente_controller import app
 
-if __name__ == "__main__":
+if __nombre__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000, reload=True)
 ```

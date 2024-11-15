@@ -1,13 +1,13 @@
 {
     "empresa": {
-      "nombre": "string",
-      "nit": "string",
-      "telefono": "string",
-      "direccion": "string",
-      "logo": "string"
+        "nombre": "SPA Car Service",
+        "nit": "900000000-0",
+        "telefono": "+57 1234567890",
+        "direccion": "Dirección por defecto",
+        "logo": "assets/default-logo.png"
     },
     "tema": {
-      "primario": "string",
-      "secondario": "string"
+        "primario": "#007bff",
+        "secondario": "#6c757d"
     }
-  }
+}

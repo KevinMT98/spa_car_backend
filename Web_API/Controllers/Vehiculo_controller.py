@@ -34,14 +34,14 @@ async def obtener_vehiculos(placa: str = None, documento_cliente: str = None):
 #         raise HTTPException(status_code=404, detail="Vehículo no encontrado")
 #     return JSONResponse(content=vehiculo.to_dict(), headers=config.Headers)
 
-@router.post("/agregar/", tags=["Vehículos"])
+@router.post("", tags=["Vehículos"])
 async def agregar_vehiculo(vehiculo: VehiculoModel):
     resultado = VehiculoServices.agregar(vehiculo)
     if "Error" in resultado:
         raise HTTPException(status_code=400, detail=resultado)
     return JSONResponse(content={"mensaje": resultado}, headers=config.Headers)
 
-@router.put("/actualizar/", tags=["Vehículos"])
+@router.put("", tags=["Vehículos"])
 async def actualizar_vehiculo(vehiculo: VehiculoModel):
     resultado = VehiculoServices.actualizar(vehiculo)
     if "Error" in resultado:
