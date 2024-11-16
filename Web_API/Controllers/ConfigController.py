@@ -1,31 +1,42 @@
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import JSONResponse
 from typing import Dict, Any
 from Core.Services.ConfigService import ConfigService
+from utilidades import config
 
 router = APIRouter()
 
 @router.get("", tags=["Configuracion"])
-async def get_config():
+async def obtener_config():
     """Obtener la configuración actual"""
     try:
-        return ConfigService.cargar_config()
+        configuracion = ConfigService.obtener_config()
+        return JSONResponse(content=configuracion.model_dump(), headers=config.Headers)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.patch("/", tags=["Configuracion"])
-async def update_config(updates: Dict[str, Any]):
+@router.put("", tags=["Configuracion"])
+async def actualizar_config(actualizaciones: Dict[str, Any]):
     """Actualizar configuración parcialmente"""
     try:
-        return ConfigService.modificar_config(updates)
+        configuracion = ConfigService.actualizar_config(actualizaciones)
+        return JSONResponse(content=configuracion.model_dump(), headers=config.Headers)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.put("/reset", tags=["Configuracion"])
-async def reset_config():
-    """Resetear la configuración a valores por defecto"""
+async def restablecer_config():
+    """Restablecer configuración a valores por defecto"""
     try:
-        default_config = ConfigService.configuracion_estandar()
-        ConfigService.agregar(default_config)
-        return default_config
+        configuracion = ConfigService._crear_config_default()  # Usar método correcto
+        ConfigService.guardar_config(configuracion)  # Guardar la configuración default
+        return JSONResponse(
+            content={"mensaje": "Configuración restablecida", "config": configuracion.dict()},
+            headers=config.Headers
+        )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"Error resetting config: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail="Error al restablecer la configuración"
+        )

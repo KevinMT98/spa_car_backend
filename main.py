@@ -6,8 +6,8 @@ from Web_API.Controllers.Servicio_controller import router as servicio_router
 from Web_API.Controllers.ConfigController import router as config_router
 
 app = FastAPI(
-    title="API de Gestión de Clientes, Vehículos y Autenticación",
-    description="Esta API permite gestionar clientes, vehículos y realizar autenticación de usuarios.",
+    title="API de SPA CAR WASH",
+    description="Esta API permite gestionar clientes, vehículos, realizar autenticación de usuarios y configuraciones de empresa",
     version="1.0.0"
 )
 

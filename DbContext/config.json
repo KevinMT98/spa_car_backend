@@ -3,7 +3,7 @@
         "nombre": "SPA Car Service",
         "nit": "900000000-0",
         "telefono": "+57 1234567890",
-        "direccion": "Dirección por defecto",
+        "direccion": "Direcci\u00f3n por defecto",
         "logo": "assets/default-logo.png"
     },
     "tema": {
