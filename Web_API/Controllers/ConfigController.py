@@ -40,3 +40,4 @@ async def restablecer_config():
             status_code=500,
             detail="Error al restablecer la configuración"
         )
+

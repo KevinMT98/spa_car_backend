@@ -33,14 +33,28 @@ class ConfigService:
             return False
 
     @classmethod
+    def obtener_estructura(cls) -> dict:
+        """Obtiene la estructura del modelo de configuración"""
+        return ConfigModel.model_json_schema()
+
+    @classmethod
     def actualizar_config(cls, actualizaciones: dict) -> ConfigModel:
         """Actualiza parcialmente la configuración"""
-        config_actual = cls.obtener_config()
-        datos_actualizados = config_actual.dict()
-        datos_actualizados.update(actualizaciones)
-        nueva_config = ConfigModel(**datos_actualizados)
-        cls.guardar_config(nueva_config)
-        return nueva_config
+        try:
+            config_actual = cls.obtener_config()
+            datos_actualizados = config_actual.model_dump()
+            # Valida estructura antes de actualizar
+            if 'empresa' in actualizaciones:
+                datos_actualizados['empresa'].update(actualizaciones['empresa'])
+            if 'tema' in actualizaciones:
+                datos_actualizados['tema'].update(actualizaciones['tema'])
+            
+            nueva_config = ConfigModel(**datos_actualizados)
+            cls.guardar_config(nueva_config)
+            return nueva_config
+        except Exception as e:
+            print(f"Error actualizando configuración: {e}")
+            return config_actual
 
     @classmethod
     def restablecer_config(cls) -> ConfigModel:

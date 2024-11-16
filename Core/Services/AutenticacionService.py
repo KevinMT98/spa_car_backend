@@ -97,7 +97,7 @@ class AuthService:
         cls.cargar_usuarios()
         user.usuario = user.usuario.upper()
         
-        for i, u in enumerate(cls.lista):
+        for i, u in enumerate(cls.users):
             if u.usuario == user.usuario:
                 # Hash nueva clave si fue modificada
                 if user.clave != u.clave:
