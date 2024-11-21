@@ -1,115 +1,127 @@
-from Core.Models.ServicioModel import Servicio, ServicioModel
+from Core.Models.ServicioModel import ServicesModel, CategoriaValor, GrupoValor, Servicio
 from utilidades import config
 import csv
-from decimal import Decimal
+import os
+import json
 
 class ServiciosServices:
     lista = []
+    COLUMNAS_CSV = ['ID_SERVICIO', 'NOMBRE', 'TIPO_SERVICIO', 'VALORES']
 
     @classmethod
     def cargar_datos(cls):
         cls.lista.clear()
         try:
-            with open(config.SERVICIOS_DB_PATH, newline='\n') as df:
-                reader = csv.reader(df, delimiter=';')
-                for id_servicio, nombre, descripcion, precio_base, segmento, descuento, precio_variable in reader:
-                    servicio = Servicio(
-                        id_servicio, 
-                        nombre, 
-                        descripcion, 
-                        Decimal(precio_base), 
-                        segmento, 
-                        Decimal(descuento),
-                        precio_variable.lower() == 'true'
+            if not os.path.exists(config.SERVICIOS_DB_PATH):
+                with open(config.SERVICIOS_DB_PATH, 'w', newline='\n') as df:
+                    writer = csv.writer(df, delimiter=';')
+                    writer.writerow(cls.COLUMNAS_CSV)
+                return
+
+            with open(config.SERVICIOS_DB_PATH, 'r', newline='\n') as df:
+                reader = csv.DictReader(df, delimiter=';')
+                for row in reader:
+                    valores = json.loads(row['VALORES'])
+                    categorias = [
+                        CategoriaValor(
+                            categoria=cat['categoria'],
+                            grupos=[GrupoValor(**grupo) for grupo in cat['grupos']]
+                        )
+                        for cat in valores
+                    ]
+                    
+                    servicio = ServicesModel(
+                        id_servicio=row['ID_SERVICIO'],
+                        nombre=row['NOMBRE'],
+                        tipo_servicio=row['TIPO_SERVICIO'],
+                        valores=categorias
                     )
                     cls.lista.append(servicio)
-        except FileNotFoundError:
-            print(f"Error: El archivo {config.SERVICIOS_DB_PATH} no se encontró.")
+
         except Exception as e:
-            print(f"Error al leer el archivo: {e}")
+            print(f"Error al cargar datos: {str(e)}")
+            return False
 
     @classmethod
-    def buscar(cls, id_servicio: str):
+    def agregar(cls, servicio: ServicesModel):
         cls.cargar_datos()
-        for servicio in cls.lista:
-            if servicio.id_servicio == id_servicio:
-                return servicio
-        return None
+        
+        if any(s.id_servicio == servicio.id_servicio for s in cls.lista):
+            return f"Error: El servicio con ID {servicio.id_servicio} ya existe."
+
+        try:
+            archivo_existe = os.path.exists(config.SERVICIOS_DB_PATH)
+            modo = 'a' if archivo_existe else 'w'
+           
+            with open(config.SERVICIOS_DB_PATH, mode=modo, newline='\n') as df:
+                writer = csv.DictWriter(df, fieldnames=cls.COLUMNAS_CSV, delimiter=';')
+                if not archivo_existe:
+                    writer.writeheader()
+                
+                writer.writerow({
+                    'ID_SERVICIO': servicio.id_servicio,
+                    'NOMBRE': servicio.nombre,
+                    'TIPO_SERVICIO': servicio.tipo_servicio,
+                    'VALORES': json.dumps([cat.model_dump() for cat in servicio.valores])
+                })
+                
+                cls.lista.append(servicio)
+            return True
+        except Exception as e:
+            print(f"Error al guardar servicio: {str(e)}")
+            return False
+
+    @classmethod
+    def obtener_todos(cls):
+        cls.cargar_datos()
+        return cls.lista
+
+    @classmethod
+    def obtener_por_id(cls, id_servicio):
+        cls.cargar_datos()
+        return next((servicio for servicio in cls.lista if servicio.id_servicio == id_servicio), None)
     
     @classmethod
-    def buscar_por_segmento(cls, segmento: str):
+    def obtener_por_categoria(cls, categoria):
         cls.cargar_datos()
-        return [servicio for servicio in cls.lista if servicio.segmento == segmento]
+        return [servicio for servicio in cls.lista if servicio.categoria == categoria]
 
     @classmethod
-    def agregar(cls, servicio: ServicioModel):
+    def actualizar(cls, servicio: ServicesModel):
         cls.cargar_datos()
-        for s in cls.lista:
-            if s.id_servicio == servicio.id_servicio:
-                return f"Error: El servicio con ID {servicio.id_servicio} ya existe."
+        indice = next((i for i, s in enumerate(cls.lista) if s.id_servicio == servicio.id_servicio), -1)
         
+        if indice == -1:
+            return False
+
+        cls.lista[indice] = servicio
+        return cls._guardar_lista()
+
+    @classmethod
+    def eliminar(cls, id_servicio):
+        cls.cargar_datos()
+        servicio = cls.obtener_por_id(id_servicio)
+        
+        if not servicio:
+            return False
+
+        cls.lista = [s for s in cls.lista if s.id_servicio != id_servicio]
+        return cls._guardar_lista()
+
+    @classmethod
+    def _guardar_lista(cls):
         try:
-            with open(config.SERVICIOS_DB_PATH, mode='a', newline='\n') as df:
-                writer = csv.writer(df, delimiter=';')
-                writer.writerow([
-                    servicio.id_servicio, 
-                    servicio.nombre, 
-                    servicio.descripcion,
-                    servicio.precio_base,
-                    servicio.segmento,
-                    servicio.descuento,
-                    servicio.precio_variable
-                ])
+            with open(config.SERVICIOS_DB_PATH, 'w', newline='\n') as df:
+                writer = csv.DictWriter(df, fieldnames=cls.COLUMNAS_CSV, delimiter=';')
+                writer.writeheader()
+                for servicio in cls.lista:
+                    writer.writerow({
+                        'ID_SERVICIO': servicio.id_servicio,
+                        'NOMBRE': servicio.nombre,
+                        'TIPO_SERVICIO': servicio.tipo_servicio,
+                        'VALORES': json.dumps([cat.model_dump() for cat in servicio.valores])
+                    })
+            return True
         except Exception as e:
-            return f"Error al escribir en el archivo: {e}"
-        
-        cls.lista.append(servicio)
-        return f"Servicio {servicio.nombre} agregado exitosamente."
-
-    @classmethod
-    def actualizar(cls, servicio: ServicioModel):
-        cls.cargar_datos()
-        for i, s in enumerate(cls.lista):
-            if s.id_servicio == servicio.id_servicio:
-                cls.lista[i] = servicio
-                try:
-                    with open(config.SERVICIOS_DB_PATH, mode='w', newline='\n') as df:
-                        writer = csv.writer(df, delimiter=';')
-                        for s in cls.lista:
-                            writer.writerow([
-                                s.id_servicio, 
-                                s.nombre, 
-                                s.descripcion,
-                                str(s.precio_base),
-                                s.segmento,
-                                str(s.descuento),
-                                str(s.precio_variable)
-                            ])
-                    return f"Servicio {servicio.nombre} actualizado exitosamente."
-                except Exception as e:
-                    return f"Error al escribir en el archivo: {e}"
-        return f"Error: El servicio con ID {servicio.id_servicio} no existe."
-
-    @classmethod
-    def eliminar(cls, id_servicio: str):
-        cls.cargar_datos()
-        for i, servicio in enumerate(cls.lista):
-            if servicio.id_servicio == id_servicio:
-                cls.lista.pop(i)
-                try:
-                    with open(config.SERVICIOS_DB_PATH, mode='w', newline='\n') as df:
-                        writer = csv.writer(df, delimiter=';')
-                        for s in cls.lista:
-                            writer.writerow([
-                                s.id_servicio, 
-                                s.nombre, 
-                                s.descripcion,
-                                str(s.precio_base),
-                                s.segmento,
-                                str(s.descuento),
-                                str(s.precio_variable)
-                            ])
-                    return f"Servicio con ID {id_servicio} eliminado exitosamente."
-                except Exception as e:
-                    return f"Error al escribir en el archivo: {e}"
-        return f"Error: El servicio con ID {id_servicio} no existe."
+            print(f"Error al guardar lista: {str(e)}")
+            return False

@@ -25,7 +25,7 @@ class ConfigService:
         try:
             os.makedirs(os.path.dirname(config.CONFIG_FILE), exist_ok=True)
             with open(config.CONFIG_FILE, 'w') as file:
-                json_data = config_data.dict()
+                json_data = config_data.model_dump()
                 json.dump(json_data, file, indent=4)
             return True
         except Exception as e:

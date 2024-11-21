@@ -6,8 +6,8 @@ import os
 class VehiculoServices:
     lista = []
     COLUMNAS_CSV = [
-        'PLACA', 'DOCUMENTO_CLIENTE', 'SEGMENTO', 'MARCA',
-        'LINEA', 'MODELO', 'CILINDRADA', 'TIPO'
+        'PLACA', 'DOCUMENTO_CLIENTE', 'CATEGORIA', 'SEGMENTO','MARCA',
+        'LINEA', 'MODELO', 'CILINDRADA', 'GRUPO'
     ]
 
     @classmethod
@@ -28,12 +28,13 @@ class VehiculoServices:
                     vehiculo = Vehiculo(
                         placa=row['PLACA'],
                         documento_cliente=row['DOCUMENTO_CLIENTE'],
+                        categoria=row['CATEGORIA'],
                         segmento=row['SEGMENTO'],
                         marca=row['MARCA'],
                         linea=row['LINEA'],
                         modelo=row['MODELO'],
                         cilindrada=row['CILINDRADA'],
-                        tipo=row['TIPO']
+                        grupo=row['GRUPO']
                     )
                     cls.lista.append(vehiculo)
         except FileNotFoundError:
@@ -63,12 +64,13 @@ class VehiculoServices:
                 writer.writerow({
                     'PLACA': vehiculo.placa,
                     'DOCUMENTO_CLIENTE': vehiculo.documento_cliente,
+                    'CATEGORIA': vehiculo.categoria,
                     'SEGMENTO': vehiculo.segmento,
                     'MARCA': vehiculo.marca,
                     'LINEA': vehiculo.linea,
                     'MODELO': vehiculo.modelo,
                     'CILINDRADA': vehiculo.cilindrada,
-                    'TIPO': vehiculo.tipo
+                    'GRUPO': vehiculo.grupo
                 })
             
             cls.lista.append(vehiculo)
@@ -90,12 +92,13 @@ class VehiculoServices:
                             writer.writerow({
                                 'PLACA': veh.placa,
                                 'DOCUMENTO_CLIENTE': veh.documento_cliente,
+                                'CATEGORIA': veh.categoria,
                                 'SEGMENTO': veh.segmento,
                                 'MARCA': veh.marca,
                                 'LINEA': veh.linea,
                                 'MODELO': veh.modelo,
                                 'CILINDRADA': veh.cilindrada,
-                                'TIPO': veh.tipo
+                                'GRUPO': veh.grupo
                             })
                     return f"Vehículo {vehiculo.placa} actualizado exitosamente."
                 except Exception as e:
@@ -117,12 +120,13 @@ class VehiculoServices:
                             writer.writerow({
                                 'PLACA': veh.placa,
                                 'DOCUMENTO_CLIENTE': veh.documento_cliente,
+                                'CATEGORIA': veh.categoria,
                                 'SEGMENTO': veh.segmento,
                                 'MARCA': veh.marca,
                                 'LINEA': veh.linea,
                                 'MODELO': veh.modelo,
                                 'CILINDRADA': veh.cilindrada,
-                                'TIPO': veh.tipo
+                                'GRUPO': veh.grupo
                             })
                     return f"Vehículo con placa {placa} eliminado exitosamente."
                 except Exception as e:
