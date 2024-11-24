@@ -98,3 +98,49 @@ class ServiciosServices:
             return f"Servicio {servicio.nombre} guardado exitosamente."
         except Exception as e:
             return f"Error al guardar servicio adicional: {e}"
+
+    @classmethod
+    def consultar_todos(cls, tipo_servicio):
+        archivo = config.SERVICIOS_GENERALES_DB_PATH if tipo_servicio == 'general' else config.SERVICIOS_ADICIONALES_DB_PATH
+        if not os.path.exists(archivo):
+            return []
+
+        try:
+            with open(archivo, 'r', newline='') as df:
+                reader = csv.DictReader(df, delimiter=';')
+                return [row for row in reader]
+        except Exception as e:
+            return f"Error al consultar servicios: {e}"
+
+    @classmethod
+    def consultar_por_id(cls, tipo_servicio, id_servicio):
+        archivo = config.SERVICIOS_GENERALES_DB_PATH if tipo_servicio == 'general' else config.SERVICIOS_ADICIONALES_DB_PATH
+        if not os.path.exists(archivo):
+            return None
+
+        try:
+            with open(archivo, 'r', newline='') as df:
+                reader = csv.DictReader(df, delimiter=';')
+                for row in reader:
+                    if row['ID_SERVICIO'] == str(id_servicio):
+                        return row
+            return None
+        except Exception as e:
+            return f"Error al consultar servicio por ID: {e}"
+
+    @classmethod
+    def consultar_por_nombre(cls, tipo_servicio, nombre):
+        archivo = config.SERVICIOS_GENERALES_DB_PATH if tipo_servicio == 'general' else config.SERVICIOS_ADICIONALES_DB_PATH
+        if not os.path.exists(archivo):
+            return None
+
+        try:
+            with open(archivo, 'r', newline='') as df:
+                reader = csv.DictReader(df, delimiter=';')
+                for row in reader:
+                    if row['NOMBRE'] == nombre:
+                        return row
+            return None
+        except Exception as e:
+            return f"Error al consultar servicio por nombre: {e}"
+

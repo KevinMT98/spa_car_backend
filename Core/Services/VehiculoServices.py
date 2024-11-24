@@ -145,8 +145,5 @@ class VehiculoServices:
     @classmethod
     def buscar_cliente(cls, documento_cliente: str):
         cls.cargar_datos()
-        documento_cliente = documento_cliente
-        for vehiculo in cls.lista:
-            if vehiculo.documento_cliente == documento_cliente:
-                return vehiculo
-        return None
+        vehiculos_cliente = [vehiculo for vehiculo in cls.lista if vehiculo.documento_cliente == documento_cliente]
+        return vehiculos_cliente if vehiculos_cliente else None

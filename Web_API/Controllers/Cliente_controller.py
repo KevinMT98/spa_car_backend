@@ -18,12 +18,6 @@ async def clientes(documento: str = None):
     content = [cliente.to_dict() for cliente in ClientesServices.lista]
     return JSONResponse(content=content, headers=config.Headers)
 
-# @router.get('/buscar/{documento}', tags=["Clientes"])
-# async def clientes_buscar(documento: str):
-#     cliente = ClientesServices.buscar(documento=documento)
-#     if not cliente:
-#         raise HTTPException(status_code=404, detail="Cliente no encontrado")
-#     return JSONResponse(content=cliente.to_dict(), headers=config.Headers)
 
 @router.post("", tags=["Clientes"])
 async def clientes_agregar(cliente: ClienteModel):

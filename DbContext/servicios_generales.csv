@@ -1,3 +1,5 @@
 ID_SERVICIO;NOMBRE;TIPO_SERVICIO;CATEGORIA;GRUPO;PRECIO
-1001;prueba;General;sgsdfs;101;10000.0
-1002;prueba;General;sgsdfs;102;20000.0
+1001;lavada general;General;Motos;101;10000.0
+1002;lavada general;General;Cuatrimotos;102;15000.0
+1003;lavada general;General;Auto;103;5000.0
+1001;string;Adicional;string;0;0.0
