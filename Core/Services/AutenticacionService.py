@@ -78,10 +78,10 @@ class AuthService:
         cls.cargar_usuarios()
         hashed_clave = hashlib.sha256(clave.encode()).hexdigest()
         
-        return any(
-            user.usuario == usuario and user.clave == hashed_clave 
-            for user in cls.users
-        )
+        for user in cls.users:
+            if user.usuario == usuario and user.clave == hashed_clave:
+                return user
+        return None
             
     @classmethod
     def obtener_usuario(cls, usuario: str):
@@ -99,9 +99,12 @@ class AuthService:
         
         for i, u in enumerate(cls.users):
             if u.usuario == user.usuario:
-                # Hash nueva clave si fue modificada
-                if user.clave != u.clave:
+                # Solo actualizar la clave si se proporciona una nueva
+                if user.clave is None:
+                    user.clave = u.clave
+                else:
                     user.clave = hashlib.sha256(user.clave.encode()).hexdigest()
+                
                 cls.users[i] = user
                 
                 try:
@@ -150,3 +153,29 @@ class AuthService:
     def listar_usuarios(cls):
         cls.cargar_usuarios()
         return cls.users
+
+    @classmethod
+    def obtener_usuarios_sin_clave(cls):
+        cls.cargar_usuarios()
+        return [
+            {
+                'usuario': user.usuario,
+                'nombre': user.nombre,
+                'apellido': user.apellido,
+                'rol': user.rol
+            } 
+            for user in cls.users
+        ]
+
+    @classmethod
+    def obtener_usuario_sin_clave(cls, usuario: str):
+        usuario = usuario.upper()
+        user = cls.obtener_usuario(usuario)
+        if user:
+            return {
+                'usuario': user.usuario,
+                'nombre': user.nombre,
+                'apellido': user.apellido,
+                'rol': user.rol
+            }
+        return None

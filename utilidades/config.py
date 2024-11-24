@@ -5,12 +5,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DB_DIR = BASE_DIR / "DbContext"
 
 # Database paths
-DATABASE_PATH = DB_DIR / "clientes.csv"
+CLIENTES_DB_PATH = DB_DIR / "clientes.csv"
 USERS_DB_PATH = DB_DIR / "usuarios.csv"
 VEHICULOS_DB_PATH = DB_DIR / "vehiculos.csv"
-SERVICIOS_DB_PATH = DB_DIR / "servicios.csv"
 CONFIG_FILE = DB_DIR / "config.json"
-
+SERVICIOS_GENERALES_DB_PATH = DB_DIR / 'servicios_generales.csv'
+SERVICIOS_ADICIONALES_DB_PATH = DB_DIR / 'servicios_adicionales.csv'
 
 
 # API Headers

@@ -1,127 +1,78 @@
-from Core.Models.ServicioModel import ServicesModel, CategoriaValor, GrupoValor, Servicio
+from Core.Models.ServicioModel import ServicioGeneralModel, ServicioAdicionalModel, CategoriaValor, GrupoValor
 from utilidades import config
 import csv
 import os
 import json
 
 class ServiciosServices:
-    lista = []
-    COLUMNAS_CSV = ['ID_SERVICIO', 'NOMBRE', 'TIPO_SERVICIO', 'VALORES']
+    lista_generales = []
+    lista_adicionales = []
+    COLUMNAS_GENERALES = ['ID_SERVICIO', 'NOMBRE', 'TIPO_SERVICIO', 'CATEGORIA', 'GRUPO', 'PRECIO']
+    COLUMNAS_ADICIONALES = ['ID_SERVICIO', 'NOMBRE', 'TIPO_SERVICIO', 'CATEGORIA', 'PRECIO_VARIABLE', 'VARIABLE', 'PRECIO_BASE']
 
     @classmethod
-    def cargar_datos(cls):
-        cls.lista.clear()
-        try:
-            if not os.path.exists(config.SERVICIOS_DB_PATH):
-                with open(config.SERVICIOS_DB_PATH, 'w', newline='\n') as df:
-                    writer = csv.writer(df, delimiter=';')
-                    writer.writerow(cls.COLUMNAS_CSV)
-                return
-
-            with open(config.SERVICIOS_DB_PATH, 'r', newline='\n') as df:
-                reader = csv.DictReader(df, delimiter=';')
-                for row in reader:
-                    valores = json.loads(row['VALORES'])
-                    categorias = [
-                        CategoriaValor(
-                            categoria=cat['categoria'],
-                            grupos=[GrupoValor(**grupo) for grupo in cat['grupos']]
-                        )
-                        for cat in valores
-                    ]
-                    
-                    servicio = ServicesModel(
-                        id_servicio=row['ID_SERVICIO'],
-                        nombre=row['NOMBRE'],
-                        tipo_servicio=row['TIPO_SERVICIO'],
-                        valores=categorias
-                    )
-                    cls.lista.append(servicio)
-
-        except Exception as e:
-            print(f"Error al cargar datos: {str(e)}")
-            return False
-
-    @classmethod
-    def agregar(cls, servicio: ServicesModel):
-        cls.cargar_datos()
+    def _obtener_ultimo_id(cls, archivo, id_inicial):
+        if not os.path.exists(archivo):
+            return id_inicial
         
-        if any(s.id_servicio == servicio.id_servicio for s in cls.lista):
-            return f"Error: El servicio con ID {servicio.id_servicio} ya existe."
-
         try:
-            archivo_existe = os.path.exists(config.SERVICIOS_DB_PATH)
+            with open(archivo, 'r', newline='') as df:
+                reader = csv.DictReader(df, delimiter=';')
+                ids = [int(row['ID_SERVICIO']) for row in reader]
+                return max(ids) + 1 if ids else id_inicial
+        except:
+            return id_inicial
+
+    @classmethod
+    def agregarGeneral(cls, servicio: ServicioGeneralModel):
+        try:
+            archivo_existe = os.path.exists(config.SERVICIOS_GENERALES_DB_PATH)
             modo = 'a' if archivo_existe else 'w'
-           
-            with open(config.SERVICIOS_DB_PATH, mode=modo, newline='\n') as df:
-                writer = csv.DictWriter(df, fieldnames=cls.COLUMNAS_CSV, delimiter=';')
+            
+            with open(config.SERVICIOS_GENERALES_DB_PATH, mode=modo, newline='\n') as df:
+                writer = csv.DictWriter(df, fieldnames=cls.COLUMNAS_GENERALES, delimiter=';')
                 if not archivo_existe:
                     writer.writeheader()
                 
-                writer.writerow({
-                    'ID_SERVICIO': servicio.id_servicio,
-                    'NOMBRE': servicio.nombre,
-                    'TIPO_SERVICIO': servicio.tipo_servicio,
-                    'VALORES': json.dumps([cat.model_dump() for cat in servicio.valores])
-                })
-                
-                cls.lista.append(servicio)
-            return True
+                for valor in servicio.valores:
+                    for grupo in valor.grupos:
+                        nuevo_id = cls._obtener_ultimo_id(config.SERVICIOS_GENERALES_DB_PATH, 1001)
+                        writer.writerow({
+                            'ID_SERVICIO': str(nuevo_id),
+                            'NOMBRE': servicio.nombre,
+                            'TIPO_SERVICIO': servicio.tipo_servicio,
+                            'CATEGORIA': valor.categoria,
+                            'GRUPO': grupo.id,
+                            'PRECIO': grupo.precio
+                        })
+            
+            return f"Servicio {servicio.nombre} guardado exitosamente."
         except Exception as e:
-            print(f"Error al guardar servicio: {str(e)}")
-            return False
+            return f"Error al guardar servicio general: {e}"
 
     @classmethod
-    def obtener_todos(cls):
-        cls.cargar_datos()
-        return cls.lista
-
-    @classmethod
-    def obtener_por_id(cls, id_servicio):
-        cls.cargar_datos()
-        return next((servicio for servicio in cls.lista if servicio.id_servicio == id_servicio), None)
-    
-    @classmethod
-    def obtener_por_categoria(cls, categoria):
-        cls.cargar_datos()
-        return [servicio for servicio in cls.lista if servicio.categoria == categoria]
-
-    @classmethod
-    def actualizar(cls, servicio: ServicesModel):
-        cls.cargar_datos()
-        indice = next((i for i, s in enumerate(cls.lista) if s.id_servicio == servicio.id_servicio), -1)
-        
-        if indice == -1:
-            return False
-
-        cls.lista[indice] = servicio
-        return cls._guardar_lista()
-
-    @classmethod
-    def eliminar(cls, id_servicio):
-        cls.cargar_datos()
-        servicio = cls.obtener_por_id(id_servicio)
-        
-        if not servicio:
-            return False
-
-        cls.lista = [s for s in cls.lista if s.id_servicio != id_servicio]
-        return cls._guardar_lista()
-
-    @classmethod
-    def _guardar_lista(cls):
+    def agregarAdicional(cls, servicio: ServicioAdicionalModel):
         try:
-            with open(config.SERVICIOS_DB_PATH, 'w', newline='\n') as df:
-                writer = csv.DictWriter(df, fieldnames=cls.COLUMNAS_CSV, delimiter=';')
-                writer.writeheader()
-                for servicio in cls.lista:
+            archivo_existe = os.path.exists(config.SERVICIOS_ADICIONALES_DB_PATH)
+            modo = 'a' if archivo_existe else 'w'
+            
+            with open(config.SERVICIOS_ADICIONALES_DB_PATH, mode=modo, newline='\n') as df:
+                writer = csv.DictWriter(df, fieldnames=cls.COLUMNAS_ADICIONALES, delimiter=';')
+                if not archivo_existe:
+                    writer.writeheader()
+                
+                for categoria in servicio.categorias:
+                    nuevo_id = cls._obtener_ultimo_id(config.SERVICIOS_ADICIONALES_DB_PATH, 5001)
                     writer.writerow({
-                        'ID_SERVICIO': servicio.id_servicio,
+                        'ID_SERVICIO': str(nuevo_id),
                         'NOMBRE': servicio.nombre,
                         'TIPO_SERVICIO': servicio.tipo_servicio,
-                        'VALORES': json.dumps([cat.model_dump() for cat in servicio.valores])
+                        'CATEGORIA': categoria,
+                        'PRECIO_VARIABLE': servicio.precio_variable,
+                        'VARIABLE': servicio.variable,
+                        'PRECIO_BASE': servicio.precio_base
                     })
-            return True
+            
+            return f"Servicio {servicio.nombre} guardado exitosamente."
         except Exception as e:
-            print(f"Error al guardar lista: {str(e)}")
-            return False
+            return f"Error al guardar servicio adicional: {e}"

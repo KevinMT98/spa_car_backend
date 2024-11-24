@@ -10,7 +10,7 @@ class EmpresaModel(BaseModel):
 
 class TemaModel(BaseModel):
     primario: str
-    secondario: str
+    secundario: str
 
 class ConfigModel(BaseModel):
     empresa: EmpresaModel
@@ -28,7 +28,7 @@ class ConfigModel(BaseModel):
                 },
                 "tema": {
                     "primario": "#007bff",
-                    "secondario": "#6c757d"
+                    "secundario": "#6c757d"
                 }
             }
         }

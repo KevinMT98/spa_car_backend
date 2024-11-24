@@ -12,7 +12,7 @@ async def clientes(documento: str = None):
         cliente = ClientesServices.buscar(documento=documento)
         if not cliente:         
             raise HTTPException(status_code=404, detail="Cliente no encontrado")
-        return JSONResponse(content=cliente.to_dict(), headers=config.Headers)
+        return JSONResponse(content=cliente, headers=config.Headers)
     ClientesServices.cargar_datos()
     content = [cliente.to_dict() for cliente in ClientesServices.lista]
     return JSONResponse(content=content, headers=config.Headers)

@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import List, Optional, Literal
 
 class GrupoValor(BaseModel):
     id: int
@@ -9,10 +9,10 @@ class CategoriaValor(BaseModel):
     categoria: str
     grupos: List[GrupoValor]
 
-class ServicesModel(BaseModel):
+class ServicioGeneralModel(BaseModel):
     id_servicio: Optional[str] = None
     nombre: str = Field(..., min_length=3, max_length=100)
-    tipo_servicio: str = Field(..., min_length=3, max_length=50)
+    tipo_servicio: Literal["Adicional", "General"]
     valores: List[CategoriaValor]
 
     def to_dict(self):
@@ -32,12 +32,23 @@ class ServicesModel(BaseModel):
             ]
         }
 
-class Servicio:
-    def __init__(self, id_servicio: str, nombre: str, tipo_servicio: str):
-        self.id_servicio = id_servicio
-        self.nombre = nombre
-        self.tipo_servicio = tipo_servicio
-        self.valores = []
+class ServicioAdicionalModel(BaseModel):
+    id_servicio: Optional[str] = None
+    nombre: str = Field(..., min_length=3, max_length=100)
+    tipo_servicio: Literal["Adicional", "General"]
+    categorias: List[str]
+    precio_variable: bool
+    variable: Literal["und", "m²", "lt", "kg", None]
+    precio_base: float
 
+    def to_dict(self):
+        return {
+            "id_servicio": self.id_servicio,
+            "nombre": self.nombre,
+            "tipo_servicio": self.tipo_servicio,
+            "categorias": self.categorias,
+            "precio_variable": self.precio_variable,
+            "variable": self.variable,
+            "precio_base": self.precio_base
+        }
 
-__all__ = ['ServicesModel', 'Servicio', 'CategoriaValor', 'GrupoValor']

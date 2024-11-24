@@ -1,63 +1,58 @@
 from fastapi import FastAPI, HTTPException, APIRouter, Path, Query
-from fastapi.responses import JSONResponse
 from Core.Services.AutenticacionService import AuthService
-from Core.Models.UserModel import UserModel
-from utilidades import config
-from typing import List
+from Core.Models.UserModel import UserModel, UserUpdateModel
+from utilidades.responses import error_response, success_response
+from pydantic import BaseModel
 
 router = APIRouter()
 
+class LoginBody(BaseModel):
+    usuario: str
+    clave: str
 
 @router.get("", tags=["Usuarios"])
-async def usuarios(usuario: str = None):
-    """Obtener lista de usuarios o un usuario específico"""
+async def usuarios(usuario: str = Query(None, description="Username del usuario a consultar")):
+    """Obtener lista de usuarios o un usuario específico usando query parameter"""
     if usuario:
-        user = AuthService.obtener_usuario(usuario)
+        user = AuthService.obtener_usuario_sin_clave(usuario)
         if not user:
-            raise HTTPException(status_code=404, detail=f"Usuario {usuario} no encontrado")
-        return JSONResponse(content=user.dict(), headers=config.Headers)
+            return error_response(404, f"Usuario {usuario} no encontrado", "NotFound")
+        return success_response(user)
         
-    AuthService.cargar_usuarios()
-    content = [user.dict() for user in AuthService.users]
-    return JSONResponse(content=content, headers=config.Headers)
+    usuarios = AuthService.obtener_usuarios_sin_clave()
+    return success_response(usuarios)
 
 @router.post("", tags=["Usuarios"])
 async def registrar_usuario(user: UserModel):
     """Registrar un nuevo usuario"""
     resultado = AuthService.registrar_usuario(user)
     if "Error" in resultado:
-        raise HTTPException(status_code=400, detail=resultado)
-    return JSONResponse(content={"mensaje": resultado}, headers=config.Headers)
+        return error_response(400, resultado, "ValidationError")
+    return success_response(None, resultado)
 
-@router.post("/login/", tags=["Usuarios"])
-async def login(
-    usuario: str = Query(..., description="Username del usuario"),
-    clave: str = Query(..., description="Contraseña del usuario")
-):
+@router.post("/login", tags=["Usuarios"])
+async def login(login_request: LoginBody):
     """Autenticar usuario"""
-    if AuthService.verificar_credenciales(usuario, clave):
-        return JSONResponse(content={"mensaje": "Ingreso exitoso"}, headers=config.Headers)
-    raise HTTPException(status_code=401, detail="Usuario o contraseña inválida")
+    user = AuthService.verificar_credenciales(login_request.usuario, login_request.clave)
+    if not user:
+        return error_response(401, "Usuario o contraseña inválida", "AuthenticationError")
+    user_dict = user.dict()
+    del user_dict['clave']
+    return success_response(user_dict)
 
-@router.put("/{usuario}", tags=["Usuarios"])
-async def actualizar_usuario(
-    usuario: str = Path(..., description="Username del usuario a actualizar"),
-    user: UserModel = None
-):
+@router.put("", tags=["Usuarios"])
+async def actualizar_usuario(user: UserUpdateModel):
     """Actualizar información de usuario"""
-    if user.usuario != usuario:
-        raise HTTPException(status_code=400, detail="Username en URL no coincide con el body")
-    
     resultado = AuthService.actualizar_usuario(user)
     if "Error" in resultado:
-        raise HTTPException(status_code=400, detail=resultado)
-    return JSONResponse(content={"mensaje": resultado}, headers=config.Headers)
+        return error_response(400, resultado, "ValidationError")
+    return success_response(None, resultado)
 
-@router.delete("/{usuario}", tags=["Usuarios"])
-async def eliminar_usuario(usuario: str = Path(..., description="Username del usuario a eliminar")):
-    """Eliminar un usuario"""
+@router.delete("", tags=["Usuarios"])
+async def eliminar_usuario(usuario: str = Query(..., description="Username del usuario a eliminar")):
+    """Eliminar un usuario usando query parameter"""
     resultado = AuthService.eliminar_usuario(usuario)
     if "Error" in resultado:
-        raise HTTPException(status_code=404, detail=resultado)
-    return JSONResponse(content={"mensaje": resultado}, headers=config.Headers)
+        return error_response(404, resultado, "NotFound")
+    return success_response(None, resultado)
 

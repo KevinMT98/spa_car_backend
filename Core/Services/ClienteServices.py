@@ -1,4 +1,4 @@
-from Core.Models.ClienteModel import Cliente, ClienteModel
+from Core.Models.ClienteModel import ClienteModel as ClienteModel
 from utilidades import config 
 import csv
 import os
@@ -12,18 +12,18 @@ class ClientesServices:
     def cargar_datos(cls):
         cls.lista.clear()
         try:
-            if not os.path.exists(config.DATABASE_PATH):
+            if not os.path.exists(config.CLIENTES_DB_PATH):
                 # Crear archivo con encabezados si no existe
-                with open(config.DATABASE_PATH, 'w', newline='\n') as df:
+                with open(config.CLIENTES_DB_PATH, 'w', newline='\n') as df:
                     writer = csv.writer(df, delimiter=';')
                     writer.writerow(cls.COLUMNAS_CSV)
                 return
 
-            with open(config.DATABASE_PATH, newline='\n') as df:
+            with open(config.CLIENTES_DB_PATH, newline='\n') as df:
                 reader = csv.DictReader(df, delimiter=';', fieldnames=cls.COLUMNAS_CSV)
                 next(reader)  # Saltar encabezados
                 for row in reader:
-                    cliente = Cliente(
+                    cliente =  ClienteModel(
                         tipo_doc=row['TIPO_DOCUMENTO'],
                         documento=row['DOCUMENTO'],
                         nombre=row['NOMBRE'],
@@ -34,7 +34,7 @@ class ClientesServices:
                     )
                     cls.lista.append(cliente)
         except FileNotFoundError:
-            print(f"Error: El archivo {config.DATABASE_PATH} no se encontró.")
+            print(f"Error: El archivo {config.CLIENTES_DB_PATH} no se encontró.")
         except Exception as e:
             print(f"Error al leer el archivo: {e}")
 
@@ -49,10 +49,10 @@ class ClientesServices:
             return f"Error: El cliente con la cédula {cliente.documento} ya existe."
         
         try:
-            archivo_existe = os.path.exists(config.DATABASE_PATH)
+            archivo_existe = os.path.exists(config.CLIENTES_DB_PATH)
             modo = 'a' if archivo_existe else 'w'
             
-            with open(config.DATABASE_PATH, mode=modo, newline='\n') as df:
+            with open(config.CLIENTES_DB_PATH, mode=modo, newline='\n') as df:
                 writer = csv.DictWriter(df, fieldnames=cls.COLUMNAS_CSV, delimiter=';')
                 if not archivo_existe:
                     writer.writeheader()
@@ -79,7 +79,7 @@ class ClientesServices:
             if c.documento == cliente.documento:
                 cls.lista[i] = cliente
                 try:
-                    with open(config.DATABASE_PATH, mode='w', newline='\n') as df:
+                    with open(config.CLIENTES_DB_PATH, mode='w', newline='\n') as df:
                         writer = csv.DictWriter(df, fieldnames=cls.COLUMNAS_CSV, delimiter=';')
                         writer.writeheader()
                         
@@ -122,7 +122,7 @@ class ClientesServices:
         
         try:
             # Reescribir el archivo sin el cliente eliminado
-            with open(config.DATABASE_PATH, mode='w', newline='\n') as df:
+            with open(config.CLIENTES_DB_PATH, mode='w', newline='\n') as df:
                 writer = csv.DictWriter(df, fieldnames=cls.COLUMNAS_CSV, delimiter=';')
                 writer.writeheader()
                 
