@@ -4,6 +4,7 @@ from Core.Services.ClienteServices import ClientesServices
 from Core.Models.ClienteModel import ClienteModel
 from utilidades import config
 
+
 router = APIRouter()
 
 @router.get("", tags=["Clientes"])

@@ -5,9 +5,10 @@ import re
 
 class ClienteModel(BaseModel):
     
-    tipo_doc: Literal["CC","NIT","CE","PP","TI"]     
+    tipo_doc: Literal["CC","NIT","CE","PP","TI", None]     
     documento: str = Field(..., min_length=3, max_length=15)
     nombre: str = Field(..., min_length=1, max_length=50)
+    
     apellido: str = Field(..., min_length=1, max_length=50)
     fec_nacimiento: date
     telefono: str = Field(..., min_length=7, max_length=15)

@@ -1,0 +1,7 @@
+
+# ...existing code...
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+# ...existing code...

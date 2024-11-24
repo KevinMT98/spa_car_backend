@@ -27,13 +27,6 @@ async def obtener_vehiculos(placa: str = None, documento_cliente: str = None):
     content = [vehiculo.to_dict() for vehiculo in VehiculoServices.lista]
     return JSONResponse(content=content, headers=config.Headers)
 
-# @router.get('/buscar/{placa}', tags=["Vehículos"])
-# async def buscar_vehiculo(placa: str):
-#     vehiculo = VehiculoServices.buscar(placa=placa)
-#     if not vehiculo:
-#         raise HTTPException(status_code=404, detail="Vehículo no encontrado")
-#     return JSONResponse(content=vehiculo.to_dict(), headers=config.Headers)
-
 @router.post("", tags=["Vehículos"])
 async def agregar_vehiculo(vehiculo: VehiculoModel):
     resultado = VehiculoServices.agregar(vehiculo)

@@ -10,7 +10,7 @@ class CategoriaValor(BaseModel):
     grupos: List[GrupoValor]
 
 class ServicioGeneralModel(BaseModel):
-    id_servicio: Optional[str] = None
+    id_servicio: Optional[int] = 0
     nombre: str = Field(..., min_length=3, max_length=100)
     tipo_servicio: Literal["Adicional", "General"]
     valores: List[CategoriaValor]
@@ -38,7 +38,7 @@ class ServicioAdicionalModel(BaseModel):
     tipo_servicio: Literal["Adicional", "General"]
     categorias: List[str]
     precio_variable: bool
-    variable: Literal["und", "m²", "lt", "kg", None]
+    variable: Literal["und", "m2", "lt", "kg", None]
     precio_base: float
 
     def to_dict(self):

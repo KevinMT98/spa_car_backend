@@ -2,7 +2,7 @@ from Core.Models.ServicioModel import ServicioGeneralModel, ServicioAdicionalMod
 from utilidades import config
 import csv
 import os
-import json
+
 
 class ServiciosServices:
     lista_generales = []
@@ -11,7 +11,7 @@ class ServiciosServices:
     COLUMNAS_ADICIONALES = ['ID_SERVICIO', 'NOMBRE', 'TIPO_SERVICIO', 'CATEGORIA', 'PRECIO_VARIABLE', 'VARIABLE', 'PRECIO_BASE']
 
     @classmethod
-    def _obtener_ultimo_id(cls, archivo, id_inicial):
+    def _obtener_ultimo_id(cls, archivo, id_inicial, count=1):
         if not os.path.exists(archivo):
             return id_inicial
         
@@ -19,13 +19,32 @@ class ServiciosServices:
             with open(archivo, 'r', newline='') as df:
                 reader = csv.DictReader(df, delimiter=';')
                 ids = [int(row['ID_SERVICIO']) for row in reader]
-                return max(ids) + 1 if ids else id_inicial
+                max_id = max(ids) if ids else id_inicial - 1
+                return max_id + count
         except:
             return id_inicial
 
     @classmethod
+    def _servicio_existe(cls, archivo, nombre):
+        if not os.path.exists(archivo):
+            return False
+        
+        try:
+            with open(archivo, 'r', newline='') as df:
+                reader = csv.DictReader(df, delimiter=';')
+                for row in reader:
+                    if row['NOMBRE'] == nombre:
+                        return True
+            return False
+        except:
+            return False
+
+    @classmethod
     def agregarGeneral(cls, servicio: ServicioGeneralModel):
         try:
+            if cls._servicio_existe(config.SERVICIOS_GENERALES_DB_PATH, servicio.nombre):
+                return f"Error: El servicio general con nombre '{servicio.nombre}' ya existe."
+            
             archivo_existe = os.path.exists(config.SERVICIOS_GENERALES_DB_PATH)
             modo = 'a' if archivo_existe else 'w'
             
@@ -35,8 +54,8 @@ class ServiciosServices:
                     writer.writeheader()
                 
                 for valor in servicio.valores:
-                    for grupo in valor.grupos:
-                        nuevo_id = cls._obtener_ultimo_id(config.SERVICIOS_GENERALES_DB_PATH, 1001)
+                    for i, grupo in enumerate(valor.grupos):
+                        nuevo_id = cls._obtener_ultimo_id(config.SERVICIOS_GENERALES_DB_PATH, 1001, i + 1)
                         writer.writerow({
                             'ID_SERVICIO': str(nuevo_id),
                             'NOMBRE': servicio.nombre,
@@ -53,6 +72,9 @@ class ServiciosServices:
     @classmethod
     def agregarAdicional(cls, servicio: ServicioAdicionalModel):
         try:
+            if cls._servicio_existe(config.SERVICIOS_ADICIONALES_DB_PATH, servicio.nombre):
+                return f"Error: El servicio adicional con nombre '{servicio.nombre}' ya existe."
+            
             archivo_existe = os.path.exists(config.SERVICIOS_ADICIONALES_DB_PATH)
             modo = 'a' if archivo_existe else 'w'
             
@@ -61,8 +83,8 @@ class ServiciosServices:
                 if not archivo_existe:
                     writer.writeheader()
                 
-                for categoria in servicio.categorias:
-                    nuevo_id = cls._obtener_ultimo_id(config.SERVICIOS_ADICIONALES_DB_PATH, 5001)
+                for i, categoria in enumerate(servicio.categorias):
+                    nuevo_id = cls._obtener_ultimo_id(config.SERVICIOS_ADICIONALES_DB_PATH, 5001, i + 1)
                     writer.writerow({
                         'ID_SERVICIO': str(nuevo_id),
                         'NOMBRE': servicio.nombre,

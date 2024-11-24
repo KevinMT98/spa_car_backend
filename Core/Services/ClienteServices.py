@@ -23,7 +23,7 @@ class ClientesServices:
                 reader = csv.DictReader(df, delimiter=';', fieldnames=cls.COLUMNAS_CSV)
                 next(reader)  # Saltar encabezados
                 for row in reader:
-                    cliente =  ClienteModel(
+                    cliente = ClienteModel(
                         tipo_doc=row['TIPO_DOCUMENTO'],
                         documento=row['DOCUMENTO'],
                         nombre=row['NOMBRE'],
