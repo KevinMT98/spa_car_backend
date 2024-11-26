@@ -7,7 +7,7 @@ class UserModel(BaseModel):
     clave: str = Field(..., min_length=6)
     rol: str = Field(..., min_length=3, max_length=50)
 
-class UserUpdateModel(BaseModel):
+class Usermodificar_facturaModel(BaseModel):
     usuario: str = Field(..., min_length=3, max_length=50)
     nombre: str = Field(..., min_length=3, max_length=50)
     apellido: str = Field(..., min_length=3, max_length=50)
