@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, APIRouter, Path, Query
 from Core.Services.AutenticacionService import AuthService
-from Core.Models.UserModel import UserModel, UserUpdateModel
+from Core.Models.UserModel import UserModel, Usermodificar_facturaModel
 from utilidades.responses import error_response, success_response
 from pydantic import BaseModel
 
@@ -41,7 +41,7 @@ async def login(login_request: LoginBody):
     return success_response(user_dict)
 
 @router.put("", tags=["Usuarios"])
-async def actualizar_usuario(user: UserUpdateModel):
+async def actualizar_usuario(user: Usermodificar_facturaModel):
     """Actualizar información de usuario"""
     resultado = AuthService.actualizar_usuario(user)
     if "Error" in resultado:

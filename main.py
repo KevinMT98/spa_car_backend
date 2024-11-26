@@ -8,6 +8,8 @@ from Web_API.Controllers.Vehiculo_controller import router as vehiculo_router
 from Web_API.Controllers.Servicio_controller import router as servicio_router
 from Web_API.Controllers.ConfigController import router as config_router
 from Web_API.Controllers.Promociones_controller import router as promocion_router
+from Web_API.Controllers.Facturas_Controller import router as facturas_router
+
 from Web_API.middleware.exception_handlers import validation_exception_handler, json_decode_exception_handler
 
 
@@ -25,6 +27,7 @@ api_router.include_router(servicio_router, prefix="/servicios", tags=["Servicios
 api_router.include_router(config_router, prefix="/configuracion", tags=["Configuracion"])
 api_router.include_router(promocion_router, prefix="/Promociones", tags=["Promociones"])
 
+api_router.include_router(facturas_router, prefix="/facturas", tags=["Facturas"])
 
 app.include_router(api_router)
 

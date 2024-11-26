@@ -1,8 +1,8 @@
 # SPA Car Backend
 
-Este proyecto es una API web para gestionar clientes de un servicio de SPA para autos. Está construido utilizando Python y Uvicorn.
+Una API RESTful para la gestión de un SPA de automóviles, construida con FastAPI y Python.
 
-## Estructura del Proyecto
+## Estructura Completa del Proyecto
 
 - `main.py`: Punto de entrada de la aplicación.
 - `ClienteModel.py`: Define el modelo de datos para los clientes.
@@ -43,6 +43,26 @@ Define los usuarios del sistema:
 - usuario: Nombre de usuario
 - rol: Rol en el sistema (admin/operador)
 - estado: Estado del usuario (activo/inactivo)
+
+### Factura
+El modelo Factura gestiona la facturación de servicios:
+- numero: str (PK) - Número único de factura
+- fecha_emision: datetime - Fecha y hora de emisión
+- cliente_id: str (FK) - ID del cliente
+- subtotal: float - Monto antes de impuestos
+- iva: float - Impuesto al valor agregado
+- total: float - Monto total a pagar
+- estado: str (pendiente/pagada/anulada)
+- metodo_pago: str (efectivo/tarjeta/transferencia)
+
+### DetalleFactura
+Representa los items individuales en una factura:
+- id: int (PK)
+- factura_id: str (FK)
+- servicio_id: int (FK)
+- cantidad: int
+- precio_unitario: float
+- subtotal: float
 
 ## Requisitos
 
@@ -110,6 +130,15 @@ Define los usuarios del sistema:
 - `POST /usuarios/registro`: Registro de nuevos usuarios
 - `PUT /usuarios/{id}`: Actualización de datos de usuario
 - `GET /usuarios/perfil`: Obtiene el perfil del usuario actual
+
+### Facturas
+- `GET /api/facturas/`: Lista todas las facturas
+- `GET /api/facturas/{numero}`: Obtiene una factura específica
+- `GET /api/facturas/cliente/{cliente_id}`: Lista facturas de un cliente
+- `POST /api/facturas/`: Genera una nueva factura
+- `PUT /api/facturas/{numero}/estado`: Actualiza el estado de la factura
+- `GET /api/facturas/reporte`: Genera reporte de facturación
+- `POST /api/facturas/{numero}/anular`: Anula una factura
 
 ### Configuración
 - `GET /config/`: Obtiene la configuración actual del sistema
@@ -219,4 +248,82 @@ Headers = {"Content-Type": "application/json, charset=utf-8"}
 ### Variables de Entorno
 
 ## Contribuciones
+
+## Módulos del Sistema
+
+### 1. Módulo de Clientes
+- **Modelo**: 
+  - documento (PK): str
+  - nombre: str
+  - apellido: str
+  - fec_nacimiento: date
+  - telefono: str
+  - email: str
+  - direccion: str
+  - ciudad: str
+  - historial_servicios: List[Servicio]
+
+- **Operaciones**:
+  - Registro de clientes
+  - Actualización de datos
+  - Consulta de historial
+  - Gestión de vehículos asociados
+  - Reportes de servicios
+
+### 2. Módulo de Vehículos
+- **Modelo**:
+  - placa (PK): str
+  - marca: str
+  - modelo: str
+  - año: int
+  - color: str
+  - tipo: str (sedan/suv/pickup)
+  - propietario_id: str
+  - historial_servicios: List[Servicio]
+
+- **Validaciones**:
+  - Formato de placa
+  - Año válido
+  - Existencia del propietario
+
+### 3. Módulo de Servicios
+- **Modelo**:
+  - id (PK): int
+  - nombre: str
+  - descripcion: str
+  - precio: float
+  - duracion: int
+  - categoria: str
+  - insumos_requeridos: List[str]
+  - disponible: bool
+
+- **Categorías**:
+  - Lavado básico
+  - Lavado premium
+  - Encerado
+  - Pulido
+  - Detallado interior
+  - Tratamiento de pintura
+
+### 4. Módulo de Usuarios
+- **Modelo**:
+  - id (PK): str
+  - usuario: str
+  - password_hash: str
+  - rol: str
+  - estado: str
+  - ultimo_acceso: datetime
+  - permisos: List[str]
+
+- **Roles**:
+  - ADMIN: Acceso total
+  - OPERADOR: Gestión servicios
+  - RECEPCIONISTA: Clientes y citas
+  - CLIENTE: Consultas propias
+
+### 5. Módulo de Configuración
+
+## Documentación Técnica Completa
+
+### Arquitectura del Sistema
 

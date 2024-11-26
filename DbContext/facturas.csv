@@ -1,0 +1,20 @@
+factura;fecha;placa;cliente;medio_pago;descuento;servicios;cantidad;descripcion;valor
+10000;20241125;unw13g;123456;efectivo;0.0;10001;0;lavada general;0.0
+10000;20241125;unw13g;123456;efectivo;0.0;9999;0;engrasada;0.0
+10000;20241125;unw13g;123456;efectivo;0.0;9999;0;prueba;0.0
+10001;20241125;unw13g;123456;efectivo;0.0;10001;0;modificacion;0.0
+10001;20241125;unw13g;123456;efectivo;0.0;9999;0;modificacion;0.0
+10002;20241125;unw13g;123456;efectivo;0.0;10001;0;lavada general;0.0
+10002;20241125;unw13g;123456;efectivo;0.0;9999;0;engrasada;0.0
+10002;20241125;unw13g;123456;efectivo;0.0;9999;0;prueba;0.0
+10003;20241125;unw13g;123456;efectivo;0.0;10001;0;lavada general;0.0
+10003;20241125;unw13g;123456;efectivo;0.0;9999;0;engrasada;0.0
+10003;20241125;unw13g;123456;efectivo;0.0;9999;0;prueba;0.0
+10004;20241125;unw13G;1036678286;tarjeta credito;0.0;9999;1;brillada;0.0
+10004;20241125;unw13G;1036678286;tarjeta credito;0.0;1001;1;lavada general xxx;0.0
+10004;20241125;unw13G;1036678286;tarjeta credito;0.0;1001;1;silicona xxx;0.0
+10004;20241125;unw13G;1036678286;tarjeta credito;0.0;9999;1;xxxxx;0.0
+10005;20241125;UNW13G;1036678286;Tarjeta credito;0.0;9999;1;brillada;0.0
+10005;20241125;UNW13G;1036678286;Tarjeta credito;0.0;1001;1;lavada ñormal;0.0
+10005;20241125;UNW13G;1036678286;Tarjeta credito;0.0;1001;1;silicona;0.0
+10005;20241125;UNW13G;1036678286;Tarjeta credito;0.0;9999;1;string;0.0
