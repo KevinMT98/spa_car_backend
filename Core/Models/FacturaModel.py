@@ -17,7 +17,7 @@ class ServicioFactura(BaseModel):
 
 class Factura(BaseModel):
     numero_factura: Optional[int]  # Hacerlo opcional para actualizaciones
-    fecha: date
+    fecha: datetime
     placa: str
     id_cliente: str 
     medio_pago: str  # Cambiar alias para que coincida con CSV
@@ -37,7 +37,7 @@ class Factura(BaseModel):
     def to_dict(self):
         return {
             "factura": self.numero_factura,
-            "fecha": self.fecha.strftime("%Y%m%d"),  # Formato fecha como string YYYYMMDD
+            "fecha": self.fecha.strftime("%Y-%m-%d"),  # Updated date format
             "placa": self.placa,
             "cliente": self.id_cliente,
             "medio_pago": self.medio_pago,  # Asegurar que usamos la misma clave que en CSV

@@ -2,3 +2,14 @@ ID_SERVICIO;NOMBRE;TIPO_SERVICIO;CATEGORIA;GRUPO;PRECIO
 1000;string;Adicional;autos;100;525250.0
 1000;string;Adicional;autos;102;525250.0
 1000;string;Adicional;autos;103;525250.0
+1001;Prueba;General;Motos;1010;20200.0
+1002;Prueba;General;autos;201;16323.0
+1003;Prueba;General;autos;201;16323.0
+1004;Prueba;General;autos;201;16323.0
+1004;Prueba;General;autos;202;16323.0
+1004;Prueba;General;autos;203;16323.0
+1005;Stringg;General;string;0;0.0
+1006;Stringg;General;string;0;0.0
+1007;Stringg;General;string;0;0.0
+1008;Stringg;General;string;0;0.0
+1009;Ptringg;General;string;0;0.0

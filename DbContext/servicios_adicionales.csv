@@ -7,3 +7,12 @@ ID_SERVICIO;NOMBRE;TIPO_SERVICIO;CATEGORIA;PRECIO_VARIABLE;VARIABLE;PRECIO_BASE
 5007;Film protector modificacion;Adicional;Motos;True;m2;10000.0
 5007;Film protector modificacion;Adicional;Carros;True;m2;10000.0
 5007;Film protector modificacion;Adicional;Cuatrimotos;True;m2;10000.0
+5008;Film2 protector;Adicional;Motos;True;m2;10000.0
+5008;Film2 protector;Adicional;Carros;True;m2;10000.0
+5008;Film2 protector;Adicional;Cuatrimotos;True;m2;10000.0
+5009;Film2 protector;Adicional;Motos;True;m2;10000.0
+5009;Film2 protector;Adicional;Carros;True;m2;10000.0
+5009;Film2 protector;Adicional;Cuatrimotos;True;m2;10000.0
+5010;Film222 protector;Adicional;Motos;True;m2;10000.0
+5010;Film222 protector;Adicional;Carros;True;m2;10000.0
+5010;Film222 protector;Adicional;Cuatrimotos;True;m2;10000.0

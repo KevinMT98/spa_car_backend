@@ -12,7 +12,7 @@ class CategoriaValor(BaseModel):
 class ServicioGeneralModel(BaseModel):
     id_servicio: Optional[int] = 0
     nombre: str = Field(..., min_length=3, max_length=100)
-    tipo_servicio: Literal["Adicional", "General"]
+    tipo_servicio: Literal["General","Adicional"]
     valores: List[CategoriaValor]
 
     def to_dict(self):

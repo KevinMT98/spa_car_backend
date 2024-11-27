@@ -48,7 +48,7 @@ class ServiciosServices:
             with open(archivo, 'r', newline='',encoding="utf-8") as df:
                 reader = csv.DictReader(df, delimiter=';')
                 for row in reader:
-                    if row['NOMBRE'] == nombre:
+                    if row['NOMBRE'] == nombre.capitalize():
                         return True
             return False
         except:
@@ -75,7 +75,7 @@ class ServiciosServices:
                     for grupo in valor.grupos:
                         writer.writerow({
                             'ID_SERVICIO': str(id_servicio),  # Mismo ID para todos los registros del servicio
-                            'NOMBRE': servicio.nombre,
+                            'NOMBRE': servicio.nombre.capitalize(),
                             'TIPO_SERVICIO': servicio.tipo_servicio,
                             'CATEGORIA': valor.categoria,
                             'GRUPO': grupo.id,
@@ -106,7 +106,7 @@ class ServiciosServices:
                 for categoria in servicio.categorias:
                     writer.writerow({
                         'ID_SERVICIO': str(id_servicio),
-                        'NOMBRE': servicio.nombre,
+                        'NOMBRE': servicio.nombre.capitalize(),
                         'TIPO_SERVICIO': servicio.tipo_servicio,
                         'CATEGORIA': categoria,
                         'PRECIO_VARIABLE': servicio.precio_variable,
@@ -135,8 +135,8 @@ class ServiciosServices:
 
     @classmethod
     def consultar_todos(cls, tipo_servicio):
-        archivo = config.SERVICIOS_GENERALES_DB_PATH if tipo_servicio == 'general' else config.SERVICIOS_ADICIONALES_DB_PATH
-        columnas = cls.COLUMNAS_GENERALES if tipo_servicio == 'general' else cls.COLUMNAS_ADICIONALES
+        archivo = config.SERVICIOS_GENERALES_DB_PATH if tipo_servicio.capitalize() == 'General' else config.SERVICIOS_ADICIONALES_DB_PATH
+        columnas = cls.COLUMNAS_GENERALES if tipo_servicio.capitalize() == 'General' else cls.COLUMNAS_ADICIONALES
         cls._ensure_csv_exists(archivo, columnas)
 
         try:
@@ -175,8 +175,8 @@ class ServiciosServices:
     @classmethod
     def update_servicio(cls, servicio_id, servicio, tipo_servicio):
         try:
-            archivo = config.SERVICIOS_GENERALES_DB_PATH if tipo_servicio == 'general' else config.SERVICIOS_ADICIONALES_DB_PATH
-            columnas = cls.COLUMNAS_GENERALES if tipo_servicio == 'general' else cls.COLUMNAS_ADICIONALES
+            archivo = config.SERVICIOS_GENERALES_DB_PATH if tipo_servicio.capitalize() == 'General' else config.SERVICIOS_ADICIONALES_DB_PATH
+            columnas = cls.COLUMNAS_GENERALES if tipo_servicio.capitalize() == 'General' else cls.COLUMNAS_ADICIONALES
             cls._ensure_csv_exists(archivo, columnas)
 
             rows = []
@@ -201,7 +201,7 @@ class ServiciosServices:
                     for grupo in valor.grupos:
                         nuevo_registro = {
                             'ID_SERVICIO': servicio_id,
-                            'NOMBRE': servicio.nombre,
+                            'NOMBRE': servicio.nombre.capitalize(),
                             'TIPO_SERVICIO': servicio.tipo_servicio,
                             'CATEGORIA': valor.categoria,
                             'GRUPO': grupo.id,
@@ -212,7 +212,7 @@ class ServiciosServices:
                 for categoria in servicio.categorias:
                     nuevo_registro = {
                         'ID_SERVICIO': servicio_id,
-                        'NOMBRE': servicio.nombre,
+                        'NOMBRE': servicio.nombre.capitalize(),
                         'TIPO_SERVICIO': servicio.tipo_servicio,
                         'CATEGORIA': categoria,
                         'PRECIO_VARIABLE': servicio.precio_variable,
@@ -229,8 +229,8 @@ class ServiciosServices:
 
     @classmethod
     def delete_servicio(cls, servicio_id, tipo_servicio):
-        archivo = config.SERVICIOS_GENERALES_DB_PATH if tipo_servicio == 'general' else config.SERVICIOS_ADICIONALES_DB_PATH
-        columnas = cls.COLUMNAS_GENERALES if tipo_servicio == 'general' else cls.COLUMNAS_ADICIONALES
+        archivo = config.SERVICIOS_GENERALES_DB_PATH if tipo_servicio.capitalize() == 'General' else config.SERVICIOS_ADICIONALES_DB_PATH
+        columnas = cls.COLUMNAS_GENERALES if tipo_servicio.capitalize() == 'General' else cls.COLUMNAS_ADICIONALES
         cls._ensure_csv_exists(archivo, columnas)
 
         try:
@@ -255,8 +255,8 @@ class ServiciosServices:
 
     @classmethod
     def consultar_por_id(cls, tipo_servicio, id_servicio):
-        archivo = config.SERVICIOS_GENERALES_DB_PATH if tipo_servicio.lower() == 'general' else config.SERVICIOS_ADICIONALES_DB_PATH
-        columnas = cls.COLUMNAS_GENERALES if tipo_servicio.lower() == 'general' else cls.COLUMNAS_ADICIONALES
+        archivo = config.SERVICIOS_GENERALES_DB_PATH if tipo_servicio.capitalize() == 'General' else config.SERVICIOS_ADICIONALES_DB_PATH
+        columnas = cls.COLUMNAS_GENERALES if tipo_servicio.capitalize() == 'General' else cls.COLUMNAS_ADICIONALES
         cls._ensure_csv_exists(archivo, columnas)
 
         try:
@@ -266,16 +266,16 @@ class ServiciosServices:
             with open(archivo, 'r', newline='', encoding="utf-8") as df:
                 reader = csv.DictReader(df, delimiter=';')
                 for row in reader:
-                    if int(row['ID_SERVICIO']) == int(id_servicio):
+                    if str(row['ID_SERVICIO']) == str(id_servicio):
                         if servicio_dict is None:
                             servicio_dict = {
                                 'id_servicio': row['ID_SERVICIO'],
                                 'nombre': row['NOMBRE'],
                                 'tipo_servicio': row['TIPO_SERVICIO'],
-                                'valores' if tipo_servicio.lower() == 'general' else 'categorias': []
+                                'valores' if tipo_servicio.capitalize() == 'General' else 'categorias': []
                             }
                         
-                        if tipo_servicio.lower() == 'general':
+                        if tipo_servicio.capitalize() == 'General':
                             valor = {
                                 'categoria': row['CATEGORIA'],
                                 'grupos': [{
@@ -301,7 +301,7 @@ class ServiciosServices:
                             valores.append(valor)
 
             if servicio_dict:
-                servicio_dict['valores' if tipo_servicio.lower() == 'general' else 'categorias'] = valores
+                servicio_dict['valores' if tipo_servicio.capitalize() == 'General' else 'categorias'] = valores
                 return servicio_dict
             return None
             
@@ -310,7 +310,7 @@ class ServiciosServices:
 
     @classmethod
     def consultar_por_nombre(cls, tipo_servicio, nombre):
-        archivo = config.SERVICIOS_GENERALES_DB_PATH if tipo_servicio == 'general' else config.SERVICIOS_ADICIONALES_DB_PATH
+        archivo = config.SERVICIOS_GENERALES_DB_PATH if tipo_servicio.capitalize() == 'General' else config.SERVICIOS_ADICIONALES_DB_PATH
         if not os.path.exists(archivo):
             return None
 

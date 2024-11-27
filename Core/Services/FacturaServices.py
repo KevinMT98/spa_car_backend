@@ -17,7 +17,7 @@ class FacturaServices:  # Changed from FacturaTrade to FacturaServices
     @classmethod
     def _ensure_csv_exists(cls):
         if not os.path.exists(FACTURAS_DB_PATH):
-            with open(FACTURAS_DB_PATH, 'w', newline='') as df:
+            with open(FACTURAS_DB_PATH, 'w', newline='', encoding="utf-8") as df:
                 writer = csv.DictWriter(df, fieldnames=cls.COLUMNAS_CSV, delimiter=';')
                 writer.writeheader()
 
@@ -40,7 +40,7 @@ class FacturaServices:  # Changed from FacturaTrade to FacturaServices
         try:
             facturas_dict = {}  # Diccionario para agrupar servicios por factura
             
-            with open(FACTURAS_DB_PATH, 'r', newline='') as df:
+            with open(FACTURAS_DB_PATH, 'r', newline='', encoding="utf-8") as df:
                 reader = csv.DictReader(df, delimiter=';')
                 
                 for row in reader:
@@ -76,7 +76,7 @@ class FacturaServices:  # Changed from FacturaTrade to FacturaServices
     def get_by_id(cls, factura_id: int):
         cls._ensure_csv_exists()
         try:
-            with open(FACTURAS_DB_PATH, 'r', newline='') as df:
+            with open(FACTURAS_DB_PATH, 'r', newline='', encoding="utf-8") as df:
                 reader = csv.DictReader(df, delimiter=';')
                 factura = None
                 servicios = []
@@ -105,7 +105,7 @@ class FacturaServices:  # Changed from FacturaTrade to FacturaServices
         rows_ordenados = sorted(rows, key=lambda x: int(x['factura']))
         
         # Guardar registros ordenados
-        with open(FACTURAS_DB_PATH, 'w', newline='') as df:
+        with open(FACTURAS_DB_PATH, 'w', newline='', encoding="utf-8") as df:
             writer = csv.DictWriter(df, fieldnames=cls.COLUMNAS_CSV, delimiter=';')
             writer.writeheader()
             writer.writerows(rows_ordenados)
@@ -125,7 +125,7 @@ class FacturaServices:  # Changed from FacturaTrade to FacturaServices
             
             factura_base = {
                 'factura': nuevo_numero,  # Usar el nuevo número autogenerado
-                'fecha': factura.fecha.strftime("%Y%m%d"),
+                'fecha': factura.fecha.strftime("%Y-%m-%d"),
                 'placa': factura.placa.upper(),
                 'cliente': factura.id_cliente,
                 'medio_pago': factura.medio_pago.capitalize(),
@@ -172,7 +172,7 @@ class FacturaServices:  # Changed from FacturaTrade to FacturaServices
             # Agregar los nuevos registros de la factura actualizada
             factura_base = {
                 'factura': factura_id,
-                'fecha': factura.fecha.strftime("%Y%m%d"),
+                'fecha': factura.fecha.strftime("%Y-%m-%d"),
                 'placa': factura.placa,
                 'cliente': factura.id_cliente,
                 'medio_pago': factura.medio_pago,
