@@ -22,12 +22,25 @@ class Factura(BaseModel):
     id_cliente: str 
     medio_pago: str  # Cambiar alias para que coincida con CSV
     descuento: float = Field(default=0.0)
+    vlr_descuento: float = Field(default=0.0)
     servicios: List[ServicioFactura]
 
     @field_validator('numero_factura')
     def validate_numero_factura(cls, v):
         if v is None:
             return 0  # Valor temporal que será reemplazado
+        return v
+    
+    @field_validator('descuento')
+    def validate_descuento(cls, v):
+        if v < 0 or v > 100:
+            raise ValueError("El descuento debe estar entre 0 y 100%")
+        return v
+    
+    @field_validator('vlr_descuento')
+    def validate_vlr_descuento(cls, v):
+        if v < 0:
+            raise ValueError("El valor del descuento no puede ser negativo")
         return v
 
     model_config = {
@@ -42,6 +55,7 @@ class Factura(BaseModel):
             "cliente": self.id_cliente,
             "medio_pago": self.medio_pago,  # Asegurar que usamos la misma clave que en CSV
             "descuento": self.descuento,
+            "vlr_descuento": self.vlr_descuento,
             "servicios": [
                 {
                     "servicio": servicio.id_servicio,

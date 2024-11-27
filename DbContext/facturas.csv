@@ -1,5 +1,5 @@
-factura;fecha;placa;cliente;medio_pago;descuento;servicios;cantidad;descripcion;valor
-10000;2024-11-27;UNW13G;103648212;Td;0.0;1001;1;Lavada general;35000.0
-10000;2024-11-27;UNW13G;103648212;Td;0.0;1002;1;brillada;35000.0
-10000;2024-11-27;UNW13G;103648212;Td;0.0;9999;1;headers;10000.0
-10000;2024-11-27;UNW13G;103648212;Td;0.0;9999;1;modific;30000.0
+factura;fecha;placa;cliente;medio_pago;descuento;vlr_descuento;servicios;cantidad;descripcion;valor
+10000;2024-11-27;STRING;string;String;0.0;0.0;9999;1;string;0.0
+10001;2024-11-27;STRING;string;String;0.0;110.0;9999;1;string;0.0
+10002;2024-11-27;string;string;string;0.0;0.0;9999;1;string;0.0
+10003;2024-11-27;STRING;string;String;10.0;110.0;9999;1;string;0.0

@@ -9,7 +9,7 @@ class FacturaServices:  # Changed from FacturaTrade to FacturaServices
     lista = []
     COLUMNAS_CSV = [
         'factura', 'fecha', 'placa', 'cliente', 
-        'medio_pago', 'descuento', 'servicios',
+        'medio_pago', 'descuento', 'vlr_descuento', 'servicios',
         'cantidad', 'descripcion', 'valor'
     ]
     NUMERO_INICIAL_FACTURA = 10000
@@ -55,6 +55,7 @@ class FacturaServices:  # Changed from FacturaTrade to FacturaServices
                             'cliente': row['cliente'],
                             'medio_pago': row['medio_pago'],
                             'descuento': row['descuento'],
+                            'vlr_descuento': row['vlr_descuento'],
                             'servicios': []
                         }
                     
@@ -130,6 +131,7 @@ class FacturaServices:  # Changed from FacturaTrade to FacturaServices
                 'cliente': factura.id_cliente,
                 'medio_pago': factura.medio_pago.capitalize(),
                 'descuento': factura.descuento,
+                'vlr_descuento': factura.vlr_descuento
             }
             
             # Crear nuevos registros
@@ -177,6 +179,7 @@ class FacturaServices:  # Changed from FacturaTrade to FacturaServices
                 'cliente': factura.id_cliente,
                 'medio_pago': factura.medio_pago,
                 'descuento': factura.descuento,
+                'vlr_descuento': factura.vlr_descuento
             }
 
             # Crear los nuevos registros para cada servicio
@@ -260,5 +263,6 @@ class FacturaServices:  # Changed from FacturaTrade to FacturaServices
             'cliente': row['cliente'],
             'medio_pago': row['medio_pago'],  # Asegurarse de usar la clave correcta del CSV
             'descuento': row['descuento'],
+            'vlr_descuento': row['vlr_descuento'],
             'servicios': [servicio]
         }
