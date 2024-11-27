@@ -27,17 +27,16 @@ async def create_factura(factura: Factura):
     except Exception as e:
         return error_response(500, str(e), "CreacionError")
 
-@router.put("",tags=["Facturas"])
+@router.put("/{factura_id}", tags=["Facturas"])
 async def update_factura(
-    factura_id: int = Path(..., title="ID de la factura"),
-    factura: Factura = None
+    factura_id: int,
+    factura: Factura
 ):
     try:
-        # Asignar el ID de la factura existente al objeto de actualización
         factura.numero_factura = factura_id
         result = FacturaServices.update(factura_id, factura)
         
-        if isinstance(result, str) and "Error" in result:  # Error message
+        if isinstance(result, str) and "Error" in result:
             raise HTTPException(status_code=500, detail=result)
         return success_response(result, "Factura actualizada exitosamente")
     except ValueError as ve:
@@ -45,7 +44,7 @@ async def update_factura(
     except Exception as e:
         return error_response(500, str(e), "ActualizacionError")
 
-@router.delete("",tags=["Facturas"])
+@router.delete("/{factura_id}",tags=["Facturas"])
 async def delete_factura(factura_id: int = Path(..., title="ID de la factura")):
     try:
         result = FacturaServices.delete(factura_id)

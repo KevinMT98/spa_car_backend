@@ -14,12 +14,12 @@ class ClientesServices:
         try:
             if not os.path.exists(config.CLIENTES_DB_PATH):
                 # Crear archivo con encabezados si no existe
-                with open(config.CLIENTES_DB_PATH, 'w', newline='\n') as df:
+                with open(config.CLIENTES_DB_PATH, 'w', newline='\n',encoding="utf-8") as df:
                     writer = csv.writer(df, delimiter=';')
                     writer.writerow(cls.COLUMNAS_CSV)
                 return
 
-            with open(config.CLIENTES_DB_PATH, newline='\n') as df:
+            with open(config.CLIENTES_DB_PATH, newline='\n',encoding="utf-8") as df:
                 reader = csv.DictReader(df, delimiter=';', fieldnames=cls.COLUMNAS_CSV)
                 next(reader)  # Saltar encabezados
                 for row in reader:
@@ -52,7 +52,7 @@ class ClientesServices:
             archivo_existe = os.path.exists(config.CLIENTES_DB_PATH)
             modo = 'a' if archivo_existe else 'w'
             
-            with open(config.CLIENTES_DB_PATH, mode=modo, newline='\n') as df:
+            with open(config.CLIENTES_DB_PATH, mode=modo, newline='\n',encoding="utf-8") as df:
                 writer = csv.DictWriter(df, fieldnames=cls.COLUMNAS_CSV, delimiter=';')
                 if not archivo_existe:
                     writer.writeheader()
@@ -79,7 +79,7 @@ class ClientesServices:
             if c.documento == cliente.documento:
                 cls.lista[i] = cliente
                 try:
-                    with open(config.CLIENTES_DB_PATH, mode='w', newline='\n') as df:
+                    with open(config.CLIENTES_DB_PATH, mode='w', newline='\n',encoding="utf-8") as df:
                         writer = csv.DictWriter(df, fieldnames=cls.COLUMNAS_CSV, delimiter=';')
                         writer.writeheader()
                         
@@ -104,7 +104,7 @@ class ClientesServices:
         for cliente in cls.lista:
             if cliente.documento == documento:
                 return cliente
-            return None    
+        return None    # Fixed indentation - was previously nested inside the for loop
     
     @classmethod
     def eliminar(cls, documento: str):
@@ -122,7 +122,7 @@ class ClientesServices:
         
         try:
             # Reescribir el archivo sin el cliente eliminado
-            with open(config.CLIENTES_DB_PATH, mode='w', newline='\n') as df:
+            with open(config.CLIENTES_DB_PATH, mode='w', newline='\n',encoding="utf-8") as df:
                 writer = csv.DictWriter(df, fieldnames=cls.COLUMNAS_CSV, delimiter=';')
                 writer.writeheader()
                 

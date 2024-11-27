@@ -1,10 +1,10 @@
 from typing import List
 from pydantic import BaseModel, Field, field_validator
-from datetime import datetime
+from datetime import datetime,date
 from typing import List, Optional, Literal
 
 class ServicioFactura(BaseModel):
-    id_servicio: str = Field(alias='servicio', default="9999")
+    id_servicio: int = Field(alias='servicio', default="9999")
     cantidad: Optional[int] = 1
     descripcion: str
     valor: float
@@ -12,15 +12,15 @@ class ServicioFactura(BaseModel):
     @field_validator('id_servicio')
     def validate_id_servicio(cls, v):
         if not v:
-            return "9999"
+            return 9999
         return v
 
 class Factura(BaseModel):
-    numero_factura: Optional[int] = Field(None, alias='factura')  # Hacerlo opcional para actualizaciones
-    fecha: datetime
+    numero_factura: Optional[int]  # Hacerlo opcional para actualizaciones
+    fecha: date
     placa: str
-    id_cliente: str = Field(alias='cliente')
-    medio_pago: str = Field(alias='medio_pago')  # Cambiar alias para que coincida con CSV
+    id_cliente: str 
+    medio_pago: str  # Cambiar alias para que coincida con CSV
     descuento: float = Field(default=0.0)
     servicios: List[ServicioFactura]
 

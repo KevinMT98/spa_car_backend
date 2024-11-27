@@ -1,2 +1,3 @@
 TIPO_DOCUMENTO;DOCUMENTO;NOMBRE;APELLIDO;FECHA_NACI;TELEFONO;EMAIL
-CC;1234546;String;String;2024-11-20;1234456789;user@example.com
+CC;123456;String;String;2024-11-24;strings;user@example.com
+CC;1236458;Pruebas;Asdas;2024-11-24;13213123;user@example.com

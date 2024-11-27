@@ -16,12 +16,12 @@ class VehiculoServices:
         try:
             if not os.path.exists(config.VEHICULOS_DB_PATH):
                 # Crear archivo con encabezados si no existe
-                with open(config.VEHICULOS_DB_PATH, 'w', newline='\n') as df:
+                with open(config.VEHICULOS_DB_PATH, 'w', newline='\n',encoding="utf-8") as df:
                     writer = csv.writer(df, delimiter=';')
                     writer.writerow(cls.COLUMNAS_CSV)
                 return
 
-            with open(config.VEHICULOS_DB_PATH, newline='\n') as df:
+            with open(config.VEHICULOS_DB_PATH, newline='\n',encoding="utf-8") as df:
                 reader = csv.DictReader(df, delimiter=';', fieldnames=cls.COLUMNAS_CSV)
                 next(reader)  # Saltar encabezados
                 for row in reader:
@@ -56,7 +56,7 @@ class VehiculoServices:
             archivo_existe = os.path.exists(config.VEHICULOS_DB_PATH)
             modo = 'a' if archivo_existe else 'w'
             
-            with open(config.VEHICULOS_DB_PATH, mode=modo, newline='\n') as df:
+            with open(config.VEHICULOS_DB_PATH, mode=modo, newline='\n',encoding="utf-8") as df:
                 writer = csv.DictWriter(df, fieldnames=cls.COLUMNAS_CSV, delimiter=';')
                 if not archivo_existe:
                     writer.writeheader()
@@ -85,7 +85,7 @@ class VehiculoServices:
             if v.placa == vehiculo.placa:
                 cls.lista[i] = vehiculo
                 try:
-                    with open(config.VEHICULOS_DB_PATH, mode='w', newline='\n') as df:
+                    with open(config.VEHICULOS_DB_PATH, mode='w', newline='\n',encoding="utf-8") as df:
                         writer = csv.DictWriter(df, fieldnames=cls.COLUMNAS_CSV, delimiter=';')
                         writer.writeheader()
                         for veh in cls.lista:
@@ -113,7 +113,7 @@ class VehiculoServices:
             if v.placa == placa:
                 del cls.lista[i]
                 try:
-                    with open(config.VEHICULOS_DB_PATH, mode='w', newline='\n') as df:
+                    with open(config.VEHICULOS_DB_PATH, mode='w', newline='\n',encoding="utf-8") as df:
                         writer = csv.DictWriter(df, fieldnames=cls.COLUMNAS_CSV, delimiter=';')
                         writer.writeheader()
                         for veh in cls.lista:

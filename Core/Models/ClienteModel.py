@@ -7,8 +7,7 @@ class ClienteModel(BaseModel):
     
     tipo_doc: Literal["CC","NIT","CE","PP","TI", None]     
     documento: str = Field(..., min_length=3, max_length=15)
-    nombre: str = Field(..., min_length=1, max_length=50)
-    
+    nombre: str = Field(..., min_length=1, max_length=50)    
     apellido: str = Field(..., min_length=1, max_length=50)
     fec_nacimiento: date
     telefono: str = Field(..., min_length=7, max_length=15)
@@ -29,7 +28,7 @@ class ClienteModel(BaseModel):
     def parse_fecha_nacimiento(cls, fec_nacimiento):
         if isinstance(fec_nacimiento, str):
             try:
-                return datetime.strptime(fec_nacimiento, "%Y-%m-%D").date()
+                return datetime.strptime(fec_nacimiento, "%Y-%m-%d").date()
             except ValueError:
                 raise ValueError("La fecha de nacimiento debe tener el formato YYYY-MM-DD.")
         return fec_nacimiento
@@ -46,7 +45,7 @@ class ClienteModel(BaseModel):
             "documento": self.documento,
             "nombre": self.nombre,
             "apellido": self.apellido,
-            "fec_nacimiento": self.fec_nacimiento,
+            "fec_nacimiento": self.fec_nacimiento.strftime("%Y-%m-%d"),
             "telefono": self.telefono,
             "email": self.email
         }
