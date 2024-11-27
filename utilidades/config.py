@@ -12,6 +12,7 @@ FACTURAS_DB_PATH = DB_DIR / "facturas.csv"
 CONFIG_FILE = DB_DIR / "config.json"
 SERVICIOS_GENERALES_DB_PATH = DB_DIR / 'servicios_generales.csv'
 SERVICIOS_ADICIONALES_DB_PATH = DB_DIR / 'servicios_adicionales.csv'
+PROMOCIONES_DB_PATH = DB_DIR / 'promociones.csv'
 
 
 # API Headers
