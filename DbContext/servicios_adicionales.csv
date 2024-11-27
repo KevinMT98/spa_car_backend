@@ -1,5 +1,4 @@
 ID_SERVICIO;NOMBRE;TIPO_SERVICIO;CATEGORIA;PRECIO_VARIABLE;VARIABLE;PRECIO_BASE
-5001;Film modificado;Adicional;Motos;True;m2;10000.0
 5002;Film modificado 2;Adicional;Motos;True;und;30000.0
 5003;Film protector;Adicional;Cuatrimotos;True;m2;10000.0
 5004;Film protector 3;Adicional;Motos;True;m2;10000.0

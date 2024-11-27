@@ -173,26 +173,25 @@ class ServiciosServices:
             return f"Error al consultar servicios: {e}"
 
     @classmethod
-    def update_servicio(cls, nombre, servicio, tipo_servicio):
+    def update_servicio(cls, servicio_id, servicio, tipo_servicio):
         try:
             archivo = config.SERVICIOS_GENERALES_DB_PATH if tipo_servicio == 'general' else config.SERVICIOS_ADICIONALES_DB_PATH
             columnas = cls.COLUMNAS_GENERALES if tipo_servicio == 'general' else cls.COLUMNAS_ADICIONALES
             cls._ensure_csv_exists(archivo, columnas)
 
             rows = []
-            id_original = None
+            servicio_encontrado = False
             
-            # Obtener el ID original y registros existentes
+            # Obtener registros existentes excluyendo el servicio a actualizar
             with open(archivo, 'r', newline='', encoding="utf-8") as df:
                 reader = csv.DictReader(df, delimiter=';')
                 for row in reader:
-                    if row['NOMBRE'] == nombre:
-                        if id_original is None:
-                            id_original = row['ID_SERVICIO']
+                    if str(row['ID_SERVICIO']) == str(servicio_id):
+                        servicio_encontrado = True
                     else:
                         rows.append(row)
 
-            if id_original is None:
+            if not servicio_encontrado:
                 return "Error: Servicio no encontrado"
 
             # Crear nuevos registros
@@ -201,7 +200,7 @@ class ServiciosServices:
                 for valor in servicio.valores:
                     for grupo in valor.grupos:
                         nuevo_registro = {
-                            'ID_SERVICIO': id_original,
+                            'ID_SERVICIO': servicio_id,
                             'NOMBRE': servicio.nombre,
                             'TIPO_SERVICIO': servicio.tipo_servicio,
                             'CATEGORIA': valor.categoria,
@@ -212,7 +211,7 @@ class ServiciosServices:
             else:
                 for categoria in servicio.categorias:
                     nuevo_registro = {
-                        'ID_SERVICIO': id_original,
+                        'ID_SERVICIO': servicio_id,
                         'NOMBRE': servicio.nombre,
                         'TIPO_SERVICIO': servicio.tipo_servicio,
                         'CATEGORIA': categoria,
@@ -229,7 +228,7 @@ class ServiciosServices:
             return f"Error al actualizar servicio: {str(e)}"
 
     @classmethod
-    def delete_servicio(cls, nombre, tipo_servicio):
+    def delete_servicio(cls, servicio_id, tipo_servicio):
         archivo = config.SERVICIOS_GENERALES_DB_PATH if tipo_servicio == 'general' else config.SERVICIOS_ADICIONALES_DB_PATH
         columnas = cls.COLUMNAS_GENERALES if tipo_servicio == 'general' else cls.COLUMNAS_ADICIONALES
         cls._ensure_csv_exists(archivo, columnas)
@@ -242,7 +241,7 @@ class ServiciosServices:
                 total_rows = 0
                 for row in reader:
                     total_rows += 1
-                    if row['NOMBRE'] != nombre:
+                    if str(row['ID_SERVICIO']) != str(servicio_id):
                         rows.append(row)
                 deleted = len(rows) < total_rows
 

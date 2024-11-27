@@ -57,54 +57,46 @@ async def crear_servicio(servicio: ServicioGeneralModel | ServicioAdicionalModel
         return error_response(500, str(e), "Error al crear servicio")
 
 
-@router.put("/{nombre}", tags=["Servicios"])
+@router.put("/{servicio_id}", tags=["Servicios"])
 async def actualizar_servicio(
-    nombre: str,
+    servicio_id: int,
     servicio: ServicioGeneralModel | ServicioAdicionalModel,
     tipo_servicio: str = Query(...)
 ):
     """Actualizar un servicio existente"""
     try:
         # Verificar si el servicio existe
-        servicio_existente = ServiciosServices.consultar_por_nombre(tipo_servicio, nombre)
+        servicio_existente = ServiciosServices.consultar_por_id(tipo_servicio, servicio_id)
         if not servicio_existente:
             return error_response(404, "Servicio no encontrado")
 
         # Llamar al método de actualización y manejar el resultado
-        resultado = ServiciosServices.update_servicio(nombre, servicio, tipo_servicio)
+        resultado = ServiciosServices.update_servicio(servicio_id, servicio, tipo_servicio)
         
-        # Si el resultado es un string, significa que hubo un error
         if isinstance(resultado, str):
             return error_response(400, resultado)
         
-        # Si llegamos aquí, la actualización fue exitosa
         return success_response(
             data=servicio.model_dump(),
             message="Servicio actualizado exitosamente",
             status_code=200
         )
     except Exception as e:
-        # Log the error for debugging
-        print(f"Error al actualizar servicio: {str(e)}")
-        return error_response(
-            500, 
-            "Error interno del servidor al actualizar el servicio",
-            str(e)
-        )
+        return error_response(500, str(e), "Error al actualizar servicio")
 
-@router.delete("/{nombre}", tags=["Servicios"])
+@router.delete("/{servicio_id}", tags=["Servicios"])
 async def eliminar_servicio(
-    nombre: str,
+    servicio_id: int,
     tipo_servicio: str = Query(...)
 ):
     """Eliminar un servicio"""
     try:
         # Verificar si el servicio existe
-        servicio_existente = ServiciosServices.consultar_por_nombre(tipo_servicio, nombre)
+        servicio_existente = ServiciosServices.consultar_por_id(tipo_servicio, servicio_id)
         if not servicio_existente:
             return error_response(404, "Servicio no encontrado")
 
-        resultado = ServiciosServices.delete_servicio(nombre, tipo_servicio)
+        resultado = ServiciosServices.delete_servicio(servicio_id, tipo_servicio)
         if isinstance(resultado, str) and "Error" in resultado:
             return error_response(400, resultado)
 
