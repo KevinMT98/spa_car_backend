@@ -13,12 +13,12 @@ class AuthService:
         cls.users.clear()
         try:
             if not os.path.exists(config.USERS_DB_PATH):
-                with open(config.USERS_DB_PATH, 'w', newline='\n',encoding="utf-8") as df:
+                with open(config.USERS_DB_PATH, 'w', newline='\n', encoding='utf-8') as df:
                     writer = csv.writer(df, delimiter=';')
                     writer.writerow(cls.COLUMNAS_CSV)
                 return
 
-            with open(config.USERS_DB_PATH, newline='\n', encoding="utf-8") as df:
+            with open(config.USERS_DB_PATH, newline='\n', encoding='utf-8') as df:
                 reader = csv.DictReader(df, delimiter=';', fieldnames=cls.COLUMNAS_CSV)
                 next(reader)  # Saltar encabezados
                 for row in reader:
@@ -54,7 +54,7 @@ class AuthService:
             archivo_existe = os.path.exists(config.USERS_DB_PATH)
             modo = 'a' if archivo_existe else 'w'
             
-            with open(config.USERS_DB_PATH, mode=modo, newline='\n', encoding="utf-8") as df:
+            with open(config.USERS_DB_PATH, mode=modo, newline='\n', encoding='utf-8') as df:
                 writer = csv.DictWriter(df, fieldnames=cls.COLUMNAS_CSV, delimiter=';')
                 if not archivo_existe:
                     writer.writeheader()
@@ -108,7 +108,7 @@ class AuthService:
                 cls.users[i] = user
                 
                 try:
-                    with open(config.USERS_DB_PATH, mode='w', newline='\n', encoding="utf-8") as df:
+                    with open(config.USERS_DB_PATH, mode='w', newline='\n', encoding='utf-8') as df:
                         writer = csv.DictWriter(df, fieldnames=cls.COLUMNAS_CSV, delimiter=';')
                         writer.writeheader()
                         for usuario in cls.users:
@@ -133,7 +133,7 @@ class AuthService:
             if u.usuario == usuario:
                 del cls.users[i]
                 try:
-                    with open(config.USERS_DB_PATH, mode='w', newline='\n',encoding="utf-8") as df:
+                    with open(config.USERS_DB_PATH, mode='w', newline='\n', encoding='utf-8') as df:
                         writer = csv.DictWriter(df, fieldnames=cls.COLUMNAS_CSV, delimiter=';')
                         writer.writeheader()
                         for user in cls.users:

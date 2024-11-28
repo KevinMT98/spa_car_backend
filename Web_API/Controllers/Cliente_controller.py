@@ -1,43 +1,43 @@
-from fastapi import APIRouter, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, HTTPException, Query
 from Core.Services.ClienteServices import ClientesServices
 from Core.Models.ClienteModel import ClienteModel
-from utilidades import config
-
-
+from utilidades.responses import success_response, error_response
 
 router = APIRouter()
 
 @router.get("", tags=["Clientes"])
-async def clientes(documento: str = None):
+async def clientes(documento: str = Query(None, description="Documento del cliente a consultar")):
+    """Obtener lista de clientes o un cliente específico usando query parameter"""
     if documento:
         cliente = ClientesServices.buscar(documento=documento)
         if not cliente:         
-            raise HTTPException(status_code=404, detail="Cliente no encontrado")
-        return JSONResponse(content=cliente.to_dict(), headers=config.Headers)
+            return error_response(404, f"Cliente con documento {documento} no encontrado", "NotFound")
+        return success_response(cliente.to_dict())
+        
     ClientesServices.cargar_datos()
     content = [cliente.to_dict() for cliente in ClientesServices.lista]
-    return JSONResponse(content=content, headers=config.Headers)
-
+    return success_response(content)
 
 @router.post("", tags=["Clientes"])
 async def clientes_agregar(cliente: ClienteModel):
+    """Registrar un nuevo cliente"""
     resultado = ClientesServices.agregar(cliente)
     if "Error" in resultado:
-        raise HTTPException(status_code=400, detail=resultado)
-    return JSONResponse(content={"mensaje": resultado}, headers=config.Headers)
+        return error_response(400, resultado, "ValidationError")
+    return success_response(None, resultado)
 
 @router.put("", tags=["Clientes"])
 async def clientes_actualizar(cliente: ClienteModel):
+    """Actualizar información de cliente"""
     resultado = ClientesServices.actualizar(cliente)
     if "Error" in resultado:
-        raise HTTPException(status_code=400, detail=resultado)
-    return JSONResponse(content={"mensaje": resultado}, headers=config.Headers)
+        return error_response(400, resultado, "ValidationError")
+    return success_response(None, resultado)
 
 @router.delete("", tags=["Clientes"])
-async def clientes_eliminar(documento: str = None):
-    
+async def clientes_eliminar(documento: str = Query(..., description="Documento del cliente a eliminar")):
+    """Eliminar un cliente usando query parameter"""
     resultado = ClientesServices.eliminar(documento)
     if "Error" in resultado:
-        raise HTTPException(status_code=400, detail=resultado)
-    return JSONResponse(content={"mensaje": resultado}, headers=config.Headers)
+        return error_response(404, resultado, "NotFound")
+    return success_response(None, resultado)

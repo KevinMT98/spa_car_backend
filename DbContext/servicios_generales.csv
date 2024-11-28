@@ -1,15 +1,22 @@
 ID_SERVICIO;NOMBRE;TIPO_SERVICIO;CATEGORIA;GRUPO;PRECIO
-1000;string;Adicional;autos;100;525250.0
-1000;string;Adicional;autos;102;525250.0
-1000;string;Adicional;autos;103;525250.0
-1001;Prueba;General;Motos;1010;20200.0
-1002;Prueba;General;autos;201;16323.0
-1003;Prueba;General;autos;201;16323.0
-1004;Prueba;General;autos;201;16323.0
-1004;Prueba;General;autos;202;16323.0
-1004;Prueba;General;autos;203;16323.0
-1005;Stringg;General;string;0;0.0
-1006;Stringg;General;string;0;0.0
-1007;Stringg;General;string;0;0.0
-1008;Stringg;General;string;0;0.0
-1009;Ptringg;General;string;0;0.0
+1001;Lavada básica;General;Moto;101;10000.0
+1001;Lavada básica;General;Moto;102;15000.0
+1001;Lavada básica;General;Moto;103;20000.0
+1001;Lavada básica;General;Carro;201;20000.0
+1001;Lavada básica;General;Carro;202;25000.0
+1001;Lavada básica;General;Carro;203;30000.0
+1001;Lavada básica;General;Cuatrimoto;301;35000.0
+1002;Lavada full;General;Moto;101;20000.0
+1002;Lavada full;General;Moto;102;25000.0
+1002;Lavada full;General;Moto;103;30000.0
+1002;Lavada full;General;Auto;201;25000.0
+1002;Lavada full;General;Auto;202;30000.0
+1002;Lavada full;General;Auto;203;35000.0
+1002;Lavada full;General;Cuatrimoto;301;40000.0
+1003;Lavada premium;General;Moto;101;20000.0
+1003;Lavada premium;General;Moto;102;25000.0
+1003;Lavada premium;General;Moto;103;30000.0
+1003;Lavada premium;General;Auto;201;25000.0
+1003;Lavada premium;General;Auto;202;30000.0
+1003;Lavada premium;General;Auto;203;35000.0
+1003;Lavada premium;General;Cuatrimoto;301;30000.0

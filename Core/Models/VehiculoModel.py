@@ -1,53 +1,44 @@
 from pydantic import BaseModel, Field
 from typing import Literal, Optional
+from datetime import datetime
 
 class VehiculoModel(BaseModel):
-    placa: str = Field(..., min_length=3, max_length=10, alias="Placa")
-    documento_cliente: str = Field(..., min_length=3, max_length=10,alias="Documento cliente")
-    categoria: Optional[str] = Field (None ,alias="Categoria")
-    segmento: Optional[str] = Field (None ,alias="Segmento")
-    marca: str = Field(..., min_length=2, max_length=50,alias="Marca")
-    linea: Optional[str] = Field (None ,alias="Linea")
-    modelo: Optional[str] = Field (None ,alias="Modelo")
-    cilindrada: int = Field(..., gt=0,alias="Cilindrada")
-    grupo: Optional[str] = Field (None ,alias="Grupo")
+    placa: str = Field(..., min_length=3, max_length=10)
+    documento_cliente: str = Field(..., min_length=3, max_length=10)
+    categoria: Literal["Moto", "Auto", "Cuatrimoto"] = Field(...)
+    segmento: Optional[str] = None
+    marca: str = Field(..., min_length=2, max_length=50)
+    linea: Optional[str] = None
+    modelo: int = Field(..., ge=1900, le=datetime.now().year + 1)
+    cilindrada: int = Field(..., gt=0)
+    grupo: int = Field(..., gt=0)
 
-    
-    def to_dict(self):
-        return {
-            "Placa": self.placa,
-            "Documento cliente": self.documento_cliente,
-            "categoria": self.categoria,
-            "Segmento": self.segmento,
-            "Marca": self.marca,
-            "Linea": self.linea,
-            "Modelo": self.modelo,
-            "Cilindrada": self.cilindrada,
-            "Grupo": self.grupo
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "placa": "ABC123",
+                "documento_cliente": "1234567890",
+                "categoria": "Auto",
+                "segmento": "Sedan",
+                "marca": "Toyota",
+                "linea": "Corolla",
+                "modelo": 2023,
+                "cilindrada": 2000,
+                "grupo": 1
             }
-
-class Vehiculo:
-    def __init__(self, placa, documento_cliente, categoria, segmento,marca,linea, modelo, cilindrada, grupo):
-        self.placa = placa
-        self.documento_cliente = documento_cliente
-        self.categoria = categoria
-        self.segmento = segmento
-        self.marca = marca
-        self.linea = linea
-        self.modelo = modelo
-        self.cilindrada = cilindrada
-        self.grupo = grupo
-        
-    def to_dict(self):
-        return {
-            "Placa": self.placa,
-            "Documento cliente": self.documento_cliente,
-            "categoria": self.categoria,
-            "Segmento": self.segmento,
-            "Marca": self.marca,
-            "Linea": self.linea,
-            "Modelo": self.modelo,
-            "Cilindrada": self.cilindrada,
-            "Grupo": self.grupo
         }
-    
+    }
+
+    def to_dict(self):
+        """Convertir a diccionario"""
+        return {
+            "placa": self.placa,
+            "documento_cliente": self.documento_cliente,
+            "categoria": self.categoria,
+            "segmento": self.segmento,
+            "marca": self.marca,
+            "linea": self.linea,
+            "modelo": self.modelo,
+            "cilindrada": self.cilindrada,
+            "grupo": self.grupo
+        }

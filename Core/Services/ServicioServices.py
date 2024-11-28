@@ -144,88 +144,116 @@ class ServiciosServices:
             with open(archivo, 'r', newline='', encoding="utf-8") as df:
                 reader = csv.DictReader(df, delimiter=';')
                 for row in reader:
-                    servicio_id = row['NOMBRE']  # Agrupar por nombre del servicio
-                    if servicio_id not in servicios_dict:
-                        servicios_dict[servicio_id] = {
+                    id_servicio = row['ID_SERVICIO']
+                    if id_servicio not in servicios_dict:
+                        servicios_dict[id_servicio] = {
+                            'id_servicio': int(id_servicio),
                             'nombre': row['NOMBRE'],
-                            'tipo_servicio': row['TIPO_SERVICIO'],
-                            'valores' if tipo_servicio == 'general' else 'categorias': []
+                            'tipo_servicio': row['TIPO_SERVICIO']
                         }
-                    
-                    if tipo_servicio == 'general':
-                        valor = {
-                            'categoria': row['CATEGORIA'],
-                            'grupo': row['GRUPO'],
-                            'precio': row['PRECIO']
-                        }
-                        servicios_dict[servicio_id]['valores'].append(valor)
-                    else:
-                        categoria = {
-                            'categoria': row['CATEGORIA'],
-                            'precio_variable': row['PRECIO_VARIABLE'],
-                            'variable': row['VARIABLE'],
-                            'precio_base': row['PRECIO_BASE']
-                        }
-                        servicios_dict[servicio_id]['categorias'].append(categoria)
+                        if tipo_servicio.capitalize() == 'General':
+                            servicios_dict[id_servicio]['valores'] = {}
+                        else:
+                            servicios_dict[id_servicio].update({
+                                'categorias': [],
+                                'precio_variable': row['PRECIO_VARIABLE'].lower() == 'true',
+                                'variable': row['VARIABLE'],
+                                'precio_base': float(row['PRECIO_BASE'])
+                            })
 
-            return list(servicios_dict.values())
+                    if tipo_servicio.capitalize() == 'General':
+                        categoria = row['CATEGORIA']
+                        if categoria not in servicios_dict[id_servicio]['valores']:
+                            servicios_dict[id_servicio]['valores'][categoria] = {
+                                'categoria': categoria,
+                                'grupos': []
+                            }
+                        servicios_dict[id_servicio]['valores'][categoria]['grupos'].append({
+                            'id': int(row['GRUPO']),
+                            'precio': float(row['PRECIO'])
+                        })
+                    else:
+                        if row['CATEGORIA'] not in servicios_dict[id_servicio]['categorias']:
+                            servicios_dict[id_servicio]['categorias'].append(row['CATEGORIA'])
+
+            # Convert the services to the final format
+            resultado = []
+            for servicio in servicios_dict.values():
+                if tipo_servicio.capitalize() == 'General':
+                    servicio['valores'] = list(servicio['valores'].values())
+                resultado.append(servicio)
+
+            return resultado
         except Exception as e:
             return f"Error al consultar servicios: {e}"
 
     @classmethod
-    def update_servicio(cls, servicio_id, servicio, tipo_servicio):
+    def update_servicio_general(cls, servicio: ServicioGeneralModel):
         try:
-            archivo = config.SERVICIOS_GENERALES_DB_PATH if tipo_servicio.capitalize() == 'General' else config.SERVICIOS_ADICIONALES_DB_PATH
-            columnas = cls.COLUMNAS_GENERALES if tipo_servicio.capitalize() == 'General' else cls.COLUMNAS_ADICIONALES
-            cls._ensure_csv_exists(archivo, columnas)
-
+            archivo = config.SERVICIOS_GENERALES_DB_PATH
             rows = []
             servicio_encontrado = False
             
-            # Obtener registros existentes excluyendo el servicio a actualizar
             with open(archivo, 'r', newline='', encoding="utf-8") as df:
                 reader = csv.DictReader(df, delimiter=';')
                 for row in reader:
-                    if str(row['ID_SERVICIO']) == str(servicio_id):
-                        servicio_encontrado = True
-                    else:
+                    if str(row['ID_SERVICIO']) != str(servicio.id_servicio):
                         rows.append(row)
+                    else:
+                        servicio_encontrado = True
 
             if not servicio_encontrado:
-                return "Error: Servicio no encontrado"
+                return "Error: Servicio general no encontrado"
 
-            # Crear nuevos registros
-            nuevos_registros = []
-            if tipo_servicio == 'general':
-                for valor in servicio.valores:
-                    for grupo in valor.grupos:
-                        nuevo_registro = {
-                            'ID_SERVICIO': servicio_id,
-                            'NOMBRE': servicio.nombre.capitalize(),
-                            'TIPO_SERVICIO': servicio.tipo_servicio,
-                            'CATEGORIA': valor.categoria,
-                            'GRUPO': grupo.id,
-                            'PRECIO': grupo.precio
-                        }
-                        nuevos_registros.append(nuevo_registro)
-            else:
-                for categoria in servicio.categorias:
-                    nuevo_registro = {
-                        'ID_SERVICIO': servicio_id,
+            for valor in servicio.valores:
+                for grupo in valor.grupos:
+                    rows.append({
+                        'ID_SERVICIO': str(servicio.id_servicio),
                         'NOMBRE': servicio.nombre.capitalize(),
                         'TIPO_SERVICIO': servicio.tipo_servicio,
-                        'CATEGORIA': categoria,
-                        'PRECIO_VARIABLE': servicio.precio_variable,
-                        'VARIABLE': servicio.variable,
-                        'PRECIO_BASE': servicio.precio_base
-                    }
-                    nuevos_registros.append(nuevo_registro)
+                        'CATEGORIA': valor.categoria,
+                        'GRUPO': str(grupo.id),
+                        'PRECIO': str(grupo.precio)
+                    })
 
-            rows.extend(nuevos_registros)
-            cls._ordenar_y_guardar_registros(archivo, columnas, rows)
+            cls._ordenar_y_guardar_registros(archivo, cls.COLUMNAS_GENERALES, rows)
             return servicio
         except Exception as e:
-            return f"Error al actualizar servicio: {str(e)}"
+            return f"Error al actualizar servicio general: {str(e)}"
+
+    @classmethod
+    def update_servicio_adicional(cls, servicio: ServicioAdicionalModel):
+        try:
+            archivo = config.SERVICIOS_ADICIONALES_DB_PATH
+            rows = []
+            servicio_encontrado = False
+            
+            with open(archivo, 'r', newline='', encoding="utf-8") as df:
+                reader = csv.DictReader(df, delimiter=';')
+                for row in reader:
+                    if str(row['ID_SERVICIO']) != str(servicio.id_servicio):
+                        rows.append(row)
+                    else:
+                        servicio_encontrado = True
+
+            if not servicio_encontrado:
+                return "Error: Servicio adicional no encontrado"
+
+            for categoria in servicio.categorias:
+                rows.append({
+                    'ID_SERVICIO': str(servicio.id_servicio),
+                    'NOMBRE': servicio.nombre.capitalize(),
+                    'TIPO_SERVICIO': servicio.tipo_servicio,
+                    'CATEGORIA': categoria,
+                    'PRECIO_VARIABLE': str(servicio.precio_variable),
+                    'VARIABLE': servicio.variable,
+                    'PRECIO_BASE': str(servicio.precio_base)
+                })
+
+            cls._ordenar_y_guardar_registros(archivo, cls.COLUMNAS_ADICIONALES, rows)
+            return servicio
+        except Exception as e:
+            return f"Error al actualizar servicio adicional: {str(e)}"
 
     @classmethod
     def delete_servicio(cls, servicio_id, tipo_servicio):
@@ -261,7 +289,7 @@ class ServiciosServices:
 
         try:
             servicio_dict = None
-            valores = []
+            valores_dict = {}
             
             with open(archivo, 'r', newline='', encoding="utf-8") as df:
                 reader = csv.DictReader(df, delimiter=';')
@@ -269,39 +297,26 @@ class ServiciosServices:
                     if str(row['ID_SERVICIO']) == str(id_servicio):
                         if servicio_dict is None:
                             servicio_dict = {
-                                'id_servicio': row['ID_SERVICIO'],
+                                'id_servicio': int(row['ID_SERVICIO']),
                                 'nombre': row['NOMBRE'],
                                 'tipo_servicio': row['TIPO_SERVICIO'],
                                 'valores' if tipo_servicio.capitalize() == 'General' else 'categorias': []
                             }
                         
                         if tipo_servicio.capitalize() == 'General':
-                            valor = {
-                                'categoria': row['CATEGORIA'],
-                                'grupos': [{
-                                    'id': row['GRUPO'],
-                                    'precio': row['PRECIO']
-                                }]
-                            }
-                            categoria_existente = next(
-                                (item for item in valores if item['categoria'] == row['CATEGORIA']), 
-                                None
-                            )
-                            if categoria_existente:
-                                categoria_existente['grupos'].append(valor['grupos'][0])
-                            else:
-                                valores.append(valor)
-                        else:
-                            valor = {
-                                'categoria': row['CATEGORIA'],
-                                'precio_variable': row['PRECIO_VARIABLE'],
-                                'variable': row['VARIABLE'],
-                                'precio_base': row['PRECIO_BASE']
-                            }
-                            valores.append(valor)
+                            categoria = row['CATEGORIA']
+                            if categoria not in valores_dict:
+                                valores_dict[categoria] = {
+                                    'categoria': categoria,
+                                    'grupos': []
+                                }
+                            valores_dict[categoria]['grupos'].append({
+                                'id': int(row['GRUPO']),
+                                'precio': float(row['PRECIO'])
+                            })
 
             if servicio_dict:
-                servicio_dict['valores' if tipo_servicio.capitalize() == 'General' else 'categorias'] = valores
+                servicio_dict['valores' if tipo_servicio.capitalize() == 'General' else 'categorias'] = list(valores_dict.values())
                 return servicio_dict
             return None
             

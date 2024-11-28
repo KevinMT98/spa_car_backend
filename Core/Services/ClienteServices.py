@@ -2,6 +2,7 @@ from Core.Models.ClienteModel import ClienteModel as ClienteModel
 from utilidades import config 
 import csv
 import os
+from datetime import datetime
 
 class ClientesServices:
     lista = []
@@ -14,12 +15,12 @@ class ClientesServices:
         try:
             if not os.path.exists(config.CLIENTES_DB_PATH):
                 # Crear archivo con encabezados si no existe
-                with open(config.CLIENTES_DB_PATH, 'w', newline='\n',encoding="utf-8") as df:
+                with open(config.CLIENTES_DB_PATH, 'w', newline='\n', encoding='utf-8') as df:
                     writer = csv.writer(df, delimiter=';')
                     writer.writerow(cls.COLUMNAS_CSV)
                 return
 
-            with open(config.CLIENTES_DB_PATH, newline='\n',encoding="utf-8") as df:
+            with open(config.CLIENTES_DB_PATH, newline='\n', encoding='utf-8') as df:
                 reader = csv.DictReader(df, delimiter=';', fieldnames=cls.COLUMNAS_CSV)
                 next(reader)  # Saltar encabezados
                 for row in reader:
@@ -28,7 +29,7 @@ class ClientesServices:
                         documento=row['DOCUMENTO'],
                         nombre=row['NOMBRE'],
                         apellido=row['APELLIDO'],
-                        fec_nacimiento=row['FECHA_NACI'],
+                        fec_nacimiento=datetime.strptime(row['FECHA_NACI'], '%Y-%m-%d').date(),
                         telefono=row['TELEFONO'],
                         email=row['EMAIL']
                     )
@@ -52,7 +53,7 @@ class ClientesServices:
             archivo_existe = os.path.exists(config.CLIENTES_DB_PATH)
             modo = 'a' if archivo_existe else 'w'
             
-            with open(config.CLIENTES_DB_PATH, mode=modo, newline='\n',encoding="utf-8") as df:
+            with open(config.CLIENTES_DB_PATH, mode=modo, newline='\n', encoding='utf-8') as df:
                 writer = csv.DictWriter(df, fieldnames=cls.COLUMNAS_CSV, delimiter=';')
                 if not archivo_existe:
                     writer.writeheader()
@@ -62,7 +63,7 @@ class ClientesServices:
                     'DOCUMENTO': cliente.documento,
                     'NOMBRE': cliente.nombre,
                     'APELLIDO': cliente.apellido,
-                    'FECHA_NACI': cliente.fec_nacimiento,
+                    'FECHA_NACI': cliente.fec_nacimiento.strftime('%Y-%m-%d'),
                     'TELEFONO': cliente.telefono,
                     'EMAIL': cliente.email
                 })
@@ -79,7 +80,7 @@ class ClientesServices:
             if c.documento == cliente.documento:
                 cls.lista[i] = cliente
                 try:
-                    with open(config.CLIENTES_DB_PATH, mode='w', newline='\n',encoding="utf-8") as df:
+                    with open(config.CLIENTES_DB_PATH, mode='w', newline='\n', encoding='utf-8') as df:
                         writer = csv.DictWriter(df, fieldnames=cls.COLUMNAS_CSV, delimiter=';')
                         writer.writeheader()
                         
@@ -104,7 +105,7 @@ class ClientesServices:
         for cliente in cls.lista:
             if cliente.documento == documento:
                 return cliente
-        return None    # Fixed indentation - was previously nested inside the for loop
+        return None    
     
     @classmethod
     def eliminar(cls, documento: str):
@@ -122,7 +123,7 @@ class ClientesServices:
         
         try:
             # Reescribir el archivo sin el cliente eliminado
-            with open(config.CLIENTES_DB_PATH, mode='w', newline='\n',encoding="utf-8") as df:
+            with open(config.CLIENTES_DB_PATH, mode='w', newline='\n', encoding='utf-8') as df:
                 writer = csv.DictWriter(df, fieldnames=cls.COLUMNAS_CSV, delimiter=';')
                 writer.writeheader()
                 

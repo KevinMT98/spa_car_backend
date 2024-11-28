@@ -6,7 +6,7 @@ from utilidades import config
 from utilidades.responses import error_response, success_response
 
 
-router = APIRouter(prefix="/servicios", tags=["Servicios"])
+router = APIRouter()
 
 
 @router.get("", tags=["Servicios"])
@@ -57,46 +57,48 @@ async def crear_servicio(servicio: ServicioGeneralModel | ServicioAdicionalModel
         return error_response(500, str(e), "Error al crear servicio")
 
 
-@router.put("/{servicio_id}", tags=["Servicios"])
+@router.put("", tags=["Servicios"])
 async def actualizar_servicio(
-    servicio_id: int,
     servicio: ServicioGeneralModel | ServicioAdicionalModel,
-    tipo_servicio: str = Query(...)
+    tipo_servicio: str = Query(..., description="Tipo de servicio (General/Adicional)")
 ):
     """Actualizar un servicio existente"""
+    print(tipo_servicio)
     try:
-        # Verificar si el servicio existe
-        servicio_existente = ServiciosServices.consultar_por_id(tipo_servicio, servicio_id)
+        if not servicio.id_servicio:
+            return error_response(400, "El ID del servicio es requerido para la actualización")
+
+        servicio_existente = ServiciosServices.consultar_por_id(tipo_servicio, servicio.id_servicio)
         if not servicio_existente:
             return error_response(404, "Servicio no encontrado")
+        if tipo_servicio.capitalize() == "General":
+            resultado = ServiciosServices.update_servicio_general(servicio)
+        else:
+            resultado = ServiciosServices.update_servicio_adicional(servicio)
 
-        # Llamar al método de actualización y manejar el resultado
-        resultado = ServiciosServices.update_servicio(servicio_id, servicio, tipo_servicio)
-        
-        if isinstance(resultado, str):
+        if isinstance(resultado, str) and "Error" in resultado:
             return error_response(400, resultado)
         
         return success_response(
-            data=servicio.model_dump(),
+            data=None,
             message="Servicio actualizado exitosamente",
             status_code=200
         )
     except Exception as e:
         return error_response(500, str(e), "Error al actualizar servicio")
 
-@router.delete("/{servicio_id}", tags=["Servicios"])
+@router.delete("", tags=["Servicios"])
 async def eliminar_servicio(
-    servicio_id: int,
-    tipo_servicio: str = Query(...)
+    tipo_servicio: str = Query(..., description="Tipo de servicio (General/Adicional)"),
+    id_servicio: int = Query(..., description="ID del servicio a eliminar")
 ):
     """Eliminar un servicio"""
     try:
-        # Verificar si el servicio existe
-        servicio_existente = ServiciosServices.consultar_por_id(tipo_servicio, servicio_id)
+        servicio_existente = ServiciosServices.consultar_por_id(tipo_servicio, id_servicio)
         if not servicio_existente:
             return error_response(404, "Servicio no encontrado")
 
-        resultado = ServiciosServices.delete_servicio(servicio_id, tipo_servicio)
+        resultado = ServiciosServices.delete_servicio(id_servicio, tipo_servicio)
         if isinstance(resultado, str) and "Error" in resultado:
             return error_response(400, resultado)
 

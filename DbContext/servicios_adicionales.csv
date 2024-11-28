@@ -1,18 +1,6 @@
 ID_SERVICIO;NOMBRE;TIPO_SERVICIO;CATEGORIA;PRECIO_VARIABLE;VARIABLE;PRECIO_BASE
-5002;Film modificado 2;Adicional;Motos;True;und;30000.0
-5003;Film protector;Adicional;Cuatrimotos;True;m2;10000.0
-5004;Film protector 3;Adicional;Motos;True;m2;10000.0
-5005;Film protector 3;Adicional;Carros;True;m2;10000.0
-5006;Film protector 3;Adicional;Cuatrimotos;True;m2;10000.0
-5007;Film protector modificacion;Adicional;Motos;True;m2;10000.0
-5007;Film protector modificacion;Adicional;Carros;True;m2;10000.0
-5007;Film protector modificacion;Adicional;Cuatrimotos;True;m2;10000.0
-5008;Film2 protector;Adicional;Motos;True;m2;10000.0
-5008;Film2 protector;Adicional;Carros;True;m2;10000.0
-5008;Film2 protector;Adicional;Cuatrimotos;True;m2;10000.0
-5009;Film2 protector;Adicional;Motos;True;m2;10000.0
-5009;Film2 protector;Adicional;Carros;True;m2;10000.0
-5009;Film2 protector;Adicional;Cuatrimotos;True;m2;10000.0
-5010;Film222 protector;Adicional;Motos;True;m2;10000.0
-5010;Film222 protector;Adicional;Carros;True;m2;10000.0
-5010;Film222 protector;Adicional;Cuatrimotos;True;m2;10000.0
+5011;Film;Adicional;Moto;True;m2;50000.0
+5011;Film;Adicional;Auto;True;m2;50000.0
+5012;Film 2;Adicional;Cuatrimoto;True;m2;50000.0
+5012;Film 2;Adicional;Auto;True;m2;50000.0
+5012;Film 2;Adicional;Moto;True;m2;50000.0
