@@ -10,7 +10,6 @@ class EmpresaModel(BaseModel):
 
 class TemaModel(BaseModel):
     primario: str
-    secundario: str
 
 class ConfigModel(BaseModel):
     empresa: EmpresaModel
@@ -24,11 +23,10 @@ class ConfigModel(BaseModel):
                     "nit": "900000000-0",
                     "telefono": "+57 1234567890",
                     "direccion": "Dirección por defecto",
-                    "logo": "assets/default-logo.png"
+                    "logo": "data:image/png;base64"
                 },
                 "tema": {
-                    "primario": "#007bff",
-                    "secundario": "#6c757d"
+                    "primario": "100 80% 30%"
                 }
             }
         }
