@@ -132,3 +132,34 @@ async def reportes_por_placa(
             message=f"Error en el servidor: {str(e)}",
             status_code=500
         )
+
+@router.get("/resumen", tags=["Reportes"])
+async def resumen(
+    fecha_inicio: Optional[str] = Query(None, description="Fecha de inicio (YYYY-MM-DD)"),
+    fecha_fin: Optional[str] = Query(None, description="Fecha fin (YYYY-MM-DD)")
+):
+    """Obtener resumen de ventas"""
+    try:
+        filtro = ReporteFiltro(fecha_inicio=fecha_inicio, fecha_fin=fecha_fin)
+        error = filtro.validar_fechas()
+        if error:
+            return error
+
+        # Obtener resumen de ventas
+        resumen = ReporteServices.get_resumen(fecha_inicio, fecha_fin)
+        
+        # Verificar si hay un mensaje de error
+        if isinstance(resumen, str) and "Error" in resumen:
+            return error_response(
+                message=resumen,
+                status_code=400
+            )
+            
+        return success_response(data=resumen)
+        
+    except Exception as e:
+        return error_response(
+            message=f"Error en el servidor: {str(e)}",
+            status_code=500
+        )
+
