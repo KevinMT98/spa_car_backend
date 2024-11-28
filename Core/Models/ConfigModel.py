@@ -10,6 +10,7 @@ class EmpresaModel(BaseModel):
 
 class TemaModel(BaseModel):
     primario: str
+    foregroundPrimario: str
 
 class ConfigModel(BaseModel):
     empresa: EmpresaModel
@@ -26,7 +27,8 @@ class ConfigModel(BaseModel):
                     "logo": "data:image/png;base64"
                 },
                 "tema": {
-                    "primario": "100 80% 30%"
+                    "primario": "100 80% 30%",
+                    "foregroundPrimario": "0 0% 100%"
                 }
             }
         }

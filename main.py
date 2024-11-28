@@ -32,7 +32,7 @@ api_router.include_router(auth_router, prefix="/usuarios", tags=["Usuarios"])
 api_router.include_router(vehiculo_router, prefix="/vehiculos", tags=["Vehículos"])
 api_router.include_router(servicio_router, prefix="/servicios", tags=["Servicios"])
 api_router.include_router(config_router, prefix="/configuracion", tags=["Configuracion"])
-api_router.include_router(promocion_router, prefix="/Promociones", tags=["Promociones"])
+api_router.include_router(promocion_router, prefix="/promociones", tags=["Promociones"])
 
 api_router.include_router(facturas_router, prefix="/facturas", tags=["Facturas"])
 api_router.include_router(reportes_router, prefix="/reportes", tags=["Reportes"])
