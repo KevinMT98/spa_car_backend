@@ -339,3 +339,37 @@ class ServiciosServices:
         except Exception as e:
             return f"Error al consultar servicio por nombre: {e}"
 
+    @classmethod
+    def calcular_valores_factura(cls, servicios: list) -> dict:
+        """Calcula el subtotal, descuento y total de los servicios"""
+        try:
+            subtotal = sum(float(servicio['valor']) * float(servicio.get('cantidad', 1)) 
+                          for servicio in servicios)
+            
+            return {
+                'subtotal': round(subtotal, 2),
+                'total': subtotal
+            }
+        except Exception as e:
+            return f"Error al calcular valores: {e}"
+
+    @classmethod
+    def aplicar_descuento(cls, valores: dict, porcentaje_descuento: float) -> dict:
+        """Aplica el descuento al total y calcula el valor del descuento"""
+        try:
+            if porcentaje_descuento < 0 or porcentaje_descuento > 100:
+                raise ValueError("El descuento debe estar entre 0 y 100%")
+            
+            subtotal = valores['subtotal']
+            vlr_descuento = round((subtotal * porcentaje_descuento) / 100, 2)
+            total = round(subtotal - vlr_descuento, 2)
+            
+            return {
+                'subtotal': subtotal,
+                'descuento': porcentaje_descuento,
+                'vlr_descuento': vlr_descuento,
+                'total': total
+            }
+        except Exception as e:
+            return f"Error al aplicar descuento: {e}"
+
