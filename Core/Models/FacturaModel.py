@@ -4,7 +4,7 @@ from datetime import datetime,date
 from typing import List, Optional, Literal
 
 class ServicioFactura(BaseModel):
-    id_servicio: int = Field(alias='servicio', default="9999")
+    id_servicio: int = Field(alias='servicio', default= 9999)
     cantidad: Optional[int] = 1
     descripcion: str
     valor: float
@@ -19,10 +19,13 @@ class Factura(BaseModel):
     numero_factura: Optional[int]  # Hacerlo opcional para actualizaciones
     fecha: datetime
     placa: str
+    categoria: str
     id_cliente: str 
     medio_pago: str  # Cambiar alias para que coincida con CSV
     descuento: float = Field(default=0.0)
     vlr_descuento: float = Field(default=0.0)
+    subtotal: float = Field(default=0.0)
+    total: float = Field(default=0.0)
     servicios: List[ServicioFactura]
 
     @field_validator('numero_factura')
@@ -50,12 +53,15 @@ class Factura(BaseModel):
     def to_dict(self):
         return {
             "factura": self.numero_factura,
-            "fecha": self.fecha.strftime("%Y-%m-%d"),  # Updated date format
+            "fecha": self.fecha.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),  # Updated format
             "placa": self.placa,
+            "categoria": self.categoria,
             "cliente": self.id_cliente,
             "medio_pago": self.medio_pago,  # Asegurar que usamos la misma clave que en CSV
             "descuento": self.descuento,
             "vlr_descuento": self.vlr_descuento,
+            "subtotal": self.subtotal,
+            "total": self.total,
             "servicios": [
                 {
                     "servicio": servicio.id_servicio,

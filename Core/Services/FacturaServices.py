@@ -8,8 +8,8 @@ from utilidades.config import FACTURAS_DB_PATH
 class FacturaServices:  # Changed from FacturaTrade to FacturaServices
     lista = []
     COLUMNAS_CSV = [
-        'factura', 'fecha', 'placa', 'cliente', 
-        'medio_pago', 'descuento', 'vlr_descuento', 'servicios',
+        'factura', 'fecha', 'placa', 'categoria','cliente', 
+        'medio_pago', 'descuento', 'vlr_descuento', 'subtotal', 'total', 'servicios',
         'cantidad', 'descripcion', 'valor'
     ]
     NUMERO_INICIAL_FACTURA = 10000
@@ -52,10 +52,13 @@ class FacturaServices:  # Changed from FacturaTrade to FacturaServices
                             'factura': row['factura'],
                             'fecha': row['fecha'],
                             'placa': row['placa'],
+                            'categoria': row['categoria'],
                             'cliente': row['cliente'],
                             'medio_pago': row['medio_pago'],
                             'descuento': row['descuento'],
                             'vlr_descuento': row['vlr_descuento'],
+                            'subtotal': row['subtotal'],
+                            'total': row['total'],
                             'servicios': []
                         }
                     
@@ -126,12 +129,15 @@ class FacturaServices:  # Changed from FacturaTrade to FacturaServices
             
             factura_base = {
                 'factura': nuevo_numero,  # Usar el nuevo número autogenerado
-                'fecha': factura.fecha.strftime("%Y-%m-%d"),
+                'fecha': factura.fecha.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),  # Updated format
                 'placa': factura.placa.upper(),
+                'categoria': factura.categoria.capitalize(),
                 'cliente': factura.id_cliente,
-                'medio_pago': factura.medio_pago.capitalize(),
+                'medio_pago': factura.medio_pago.upper(),
                 'descuento': factura.descuento,
-                'vlr_descuento': factura.vlr_descuento
+                'vlr_descuento': factura.vlr_descuento,
+                'subtotal': factura.subtotal,
+                'total': factura.total
             }
             
             # Crear nuevos registros
@@ -174,12 +180,15 @@ class FacturaServices:  # Changed from FacturaTrade to FacturaServices
             # Agregar los nuevos registros de la factura actualizada
             factura_base = {
                 'factura': factura_id,
-                'fecha': factura.fecha.strftime("%Y-%m-%d"),
+                'fecha': factura.fecha.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),  # Updated format
                 'placa': factura.placa,
+                'categoria': factura.categoria.capitalize(),
                 'cliente': factura.id_cliente,
-                'medio_pago': factura.medio_pago,
+                'medio_pago': factura.medio_pago.upper(),
                 'descuento': factura.descuento,
-                'vlr_descuento': factura.vlr_descuento
+                'vlr_descuento': factura.vlr_descuento,
+                'subtotal': factura.subtotal,
+                'total': factura.total
             }
 
             # Crear los nuevos registros para cada servicio
@@ -260,9 +269,12 @@ class FacturaServices:  # Changed from FacturaTrade to FacturaServices
             'factura': row['factura'],
             'fecha': row['fecha'],
             'placa': row['placa'],
+            'categoria': row['categoria'],
             'cliente': row['cliente'],
             'medio_pago': row['medio_pago'],  # Asegurarse de usar la clave correcta del CSV
             'descuento': row['descuento'],
             'vlr_descuento': row['vlr_descuento'],
+            'subtotal': row['subtotal'],
+            'total': row['total'],
             'servicios': [servicio]
         }
