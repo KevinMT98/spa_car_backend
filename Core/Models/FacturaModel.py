@@ -1,7 +1,8 @@
 from typing import List
 from pydantic import BaseModel, Field, field_validator
-from datetime import datetime,date
-from typing import List, Optional, Literal
+from datetime import datetime
+from typing import List, Optional
+
 
 class ServicioFactura(BaseModel):
     id_servicio: int = Field(alias='servicio', default= 9999)
@@ -53,7 +54,7 @@ class Factura(BaseModel):
     def to_dict(self):
         return {
             "factura": self.numero_factura,
-            "fecha": self.fecha.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),  # Updated format
+            "fecha": self.fecha.isoformat(),  # Updated format
             "placa": self.placa,
             "categoria": self.categoria,
             "cliente": self.id_cliente,

@@ -1,7 +1,7 @@
 import csv
 import os
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from Core.Models.FacturaModel import Factura, ServicioFactura
 from utilidades.config import FACTURAS_DB_PATH
 
@@ -129,7 +129,7 @@ class FacturaServices:  # Changed from FacturaTrade to FacturaServices
             
             factura_base = {
                 'factura': nuevo_numero,  # Usar el nuevo número autogenerado
-                'fecha': factura.fecha.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),  # Updated format
+                'fecha': factura.fecha.isoformat(),  # Updated format
                 'placa': factura.placa.upper(),
                 'categoria': factura.categoria.capitalize(),
                 'cliente': factura.id_cliente,
@@ -180,7 +180,7 @@ class FacturaServices:  # Changed from FacturaTrade to FacturaServices
             # Agregar los nuevos registros de la factura actualizada
             factura_base = {
                 'factura': factura_id,
-                'fecha': factura.fecha.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),  # Updated format
+                'fecha': factura.fecha.astimezone(timezone.utc).isoformat(),  # Updated format
                 'placa': factura.placa,
                 'categoria': factura.categoria.capitalize(),
                 'cliente': factura.id_cliente,
