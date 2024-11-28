@@ -1,8 +1,8 @@
-from fastapi import APIRouter, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter
 from typing import Dict, Any
 from Core.Services.ConfigService import ConfigService
 from utilidades import config
+from utilidades.responses import error_response, success_response
 
 router = APIRouter()
 
@@ -11,33 +11,39 @@ async def obtener_config():
     """Obtener la configuración actual"""
     try:
         configuracion = ConfigService.obtener_config()
-        return JSONResponse(content=configuracion.model_dump(), headers=config.Headers)
+        return success_response(
+            data=configuracion.model_dump(),
+            message="Configuración obtenida exitosamente",
+            status_code=200
+        )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        return error_response(500, str(e), "Error al obtener configuración")
 
 @router.put("", tags=["Configuracion"])
 async def actualizar_config(actualizaciones: Dict[str, Any]):
     """Actualizar configuración parcialmente"""
     try:
         configuracion = ConfigService.actualizar_config(actualizaciones)
-        return JSONResponse(content=configuracion.model_dump(), headers=config.Headers)
+        if isinstance(configuracion, str) and "Error" in configuracion:
+            return error_response(400, configuracion)
+        
+        return success_response(
+            data=None,
+            message="Configuración actualizada exitosamente",
+            status_code=200
+        )
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        return error_response(400, str(e), "Error al actualizar configuración")
 
 @router.put("/reset", tags=["Configuracion"])
 async def restablecer_config():
     """Restablecer configuración a valores por defecto"""
     try:
-        configuracion = ConfigService._crear_config_default()  # Usar método correcto
-        ConfigService.guardar_config(configuracion)  # Guardar la configuración default
-        return JSONResponse(
-            content={"mensaje": "Configuración restablecida", "config": configuracion.dict()},
-            headers=config.Headers
+        configuracion = ConfigService.restablecer_config()
+        return success_response(
+            data=configuracion.model_dump(),
+            message="Configuración restablecida exitosamente",
+            status_code=200
         )
     except Exception as e:
-        print(f"Error resetting config: {str(e)}")
-        raise HTTPException(
-            status_code=500,
-            detail="Error al restablecer la configuración"
-        )
-
+        return error_response(500, str(e), "Error al restablecer configuración")
