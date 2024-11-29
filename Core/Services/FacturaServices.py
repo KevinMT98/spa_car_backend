@@ -8,7 +8,7 @@ from utilidades.config import FACTURAS_DB_PATH
 class FacturaServices:  # Changed from FacturaTrade to FacturaServices
     lista = []
     COLUMNAS_CSV = [
-        'factura', 'fecha', 'placa', 'categoria','cliente', 
+        'factura', 'fecha', 'placa', 'categoria','grupo','cliente', 
         'medio_pago', 'descuento', 'vlr_descuento', 'subtotal', 'total', 'servicios',
         'cantidad', 'descripcion', 'valor'
     ]
@@ -49,25 +49,26 @@ class FacturaServices:  # Changed from FacturaTrade to FacturaServices
                     if factura_id not in facturas_dict:
                         # Crear nueva entrada de factura
                         facturas_dict[factura_id] = {
-                            'factura': row['factura'],
+                            'factura': int(row['factura']),
                             'fecha': row['fecha'],
                             'placa': row['placa'],
                             'categoria': row['categoria'],
+                            'grupo': int(row['grupo']),
                             'cliente': row['cliente'],
                             'medio_pago': row['medio_pago'],
-                            'descuento': row['descuento'],
-                            'vlr_descuento': row['vlr_descuento'],
-                            'subtotal': row['subtotal'],
-                            'total': row['total'],
+                            'descuento': float(row['descuento']),
+                            'vlr_descuento': float(row['vlr_descuento']),
+                            'subtotal': float(row['subtotal']),
+                            'total': float(row['total']),
                             'servicios': []
                         }
                     
                     # Agregar servicio a la factura existente
                     servicio = {
-                        'servicio': row['servicios'],
-                        'cantidad': row['cantidad'],
+                        'servicio': int(row['servicios']),
+                        'cantidad': int(row['cantidad']),
                         'descripcion': row['descripcion'],
-                        'valor': row['valor']
+                        'valor': float(row['valor']),
                     }
                     facturas_dict[factura_id]['servicios'].append(servicio)
             
@@ -89,10 +90,10 @@ class FacturaServices:  # Changed from FacturaTrade to FacturaServices
                         if factura is None:
                             factura = cls._process_row(row)
                         servicio = {
-                            'servicio': row['servicios'],
-                            'cantidad': row['cantidad'],
+                            'servicio': int(row['servicios']),
+                            'cantidad': int(row['cantidad']),
                             'descripcion': row['descripcion'],
-                            'valor': row['valor']
+                            'valor': float(row['valor']),
                         }
                         servicios.append(servicio)
                 if factura:
@@ -128,16 +129,17 @@ class FacturaServices:  # Changed from FacturaTrade to FacturaServices
             nuevo_numero = cls._obtener_ultimo_id()
             
             factura_base = {
-                'factura': nuevo_numero,  # Usar el nuevo número autogenerado
+                'factura': int(nuevo_numero),  # Usar el nuevo número autogenerado
                 'fecha': factura.fecha.isoformat(),  # Updated format
                 'placa': factura.placa.upper(),
                 'categoria': factura.categoria.capitalize(),
+                'grupo': int(factura.grupo),
                 'cliente': factura.id_cliente,
                 'medio_pago': factura.medio_pago.upper(),
-                'descuento': factura.descuento,
-                'vlr_descuento': factura.vlr_descuento,
-                'subtotal': factura.subtotal,
-                'total': factura.total
+                'descuento': float(factura.descuento),
+                'vlr_descuento': float(factura.vlr_descuento),
+                'subtotal': float(factura.subtotal),
+                'total': float(factura.total),
             }
             
             # Crear nuevos registros
@@ -148,7 +150,7 @@ class FacturaServices:  # Changed from FacturaTrade to FacturaServices
                     'servicios': servicio.id_servicio,
                     'cantidad': servicio.cantidad,
                     'descripcion': servicio.descripcion,
-                    'valor': servicio.valor
+                    'valor': float(servicio.valor),
                 })
                 nuevos_registros.append(row)
             
@@ -179,16 +181,17 @@ class FacturaServices:  # Changed from FacturaTrade to FacturaServices
 
             # Agregar los nuevos registros de la factura actualizada
             factura_base = {
-                'factura': factura_id,
+                'factura': int(factura_id),
                 'fecha': factura.fecha.astimezone(timezone.utc).isoformat(),  # Updated format
                 'placa': factura.placa,
                 'categoria': factura.categoria.capitalize(),
+                'grupo': int(factura.grupo),
                 'cliente': factura.id_cliente,
                 'medio_pago': factura.medio_pago.upper(),
-                'descuento': factura.descuento,
-                'vlr_descuento': factura.vlr_descuento,
-                'subtotal': factura.subtotal,
-                'total': factura.total
+                'descuento': float(factura.descuento),
+                'vlr_descuento': float(factura.vlr_descuento),
+                'subtotal': float(factura.subtotal),
+                'total': float(factura.total),
             }
 
             # Crear los nuevos registros para cada servicio
@@ -199,7 +202,7 @@ class FacturaServices:  # Changed from FacturaTrade to FacturaServices
                     'servicios': servicio.id_servicio,
                     'cantidad': servicio.cantidad,
                     'descripcion': servicio.descripcion,
-                    'valor': servicio.valor
+                    'valor': float(servicio.valor),
                 })
                 nuevos_registros.append(row)
 
@@ -218,7 +221,7 @@ class FacturaServices:  # Changed from FacturaTrade to FacturaServices
                         'servicio': s.id_servicio,
                         'cantidad': s.cantidad,
                         'descripcion': s.descripcion,
-                        'valor': s.valor
+                        'valor': float(s.valor),
                     } for s in factura.servicios
                 ]
             }
@@ -260,21 +263,22 @@ class FacturaServices:  # Changed from FacturaTrade to FacturaServices
     def _process_row(cls, row):
         """Procesa una fila del CSV para convertir en el formato requerido"""
         servicio = {
-            'servicio': row['servicios'],
-            'cantidad': row['cantidad'],
+            'servicio': int(row['servicios']),
+            'cantidad': int(row['cantidad']),
             'descripcion': row['descripcion'],
-            'valor': row['valor']
+            'valor': float(row['valor']),
         }
         return {
-            'factura': row['factura'],
+            'factura': int(row['factura']),
             'fecha': row['fecha'],
             'placa': row['placa'],
             'categoria': row['categoria'],
+            'grupo': int(row['grupo']),
             'cliente': row['cliente'],
             'medio_pago': row['medio_pago'],  # Asegurarse de usar la clave correcta del CSV
-            'descuento': row['descuento'],
-            'vlr_descuento': row['vlr_descuento'],
-            'subtotal': row['subtotal'],
-            'total': row['total'],
+            'descuento': float(row['descuento']),
+            'vlr_descuento': float(row['vlr_descuento']),
+            'subtotal': float(row['subtotal']),
+            'total': float(row['total']),
             'servicios': [servicio]
         }

@@ -17,10 +17,11 @@ class ServicioFactura(BaseModel):
         return v
 
 class Factura(BaseModel):
-    numero_factura: Optional[int]  # Hacerlo opcional para actualizaciones
+    numero_factura: Optional[str]  # Hacerlo opcional para actualizaciones
     fecha: datetime
     placa: str
     categoria: str
+    grupo: int
     id_cliente: str 
     medio_pago: str  # Cambiar alias para que coincida con CSV
     descuento: float = Field(default=0.0)
@@ -56,7 +57,8 @@ class Factura(BaseModel):
             "factura": self.numero_factura,
             "fecha": self.fecha.isoformat(),  # Updated format
             "placa": self.placa,
-            "categoria": self.categoria,
+            "categoria": self.categoria.capitalize(),
+            "grupo": self.grupo,
             "cliente": self.id_cliente,
             "medio_pago": self.medio_pago,  # Asegurar que usamos la misma clave que en CSV
             "descuento": self.descuento,
