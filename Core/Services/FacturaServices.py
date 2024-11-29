@@ -1,7 +1,7 @@
 import csv
 import os
 import json
-from datetime import timezone
+from datetime import timezone, datetime
 from Core.Models.FacturaModel import Factura
 from utilidades.config import FACTURAS_DB_PATH
 
@@ -47,10 +47,20 @@ class FacturaServices:
                     factura_id = row['factura']
                     
                     if factura_id not in facturas_dict:
-                        # Crear nueva entrada de factura
+                        # Convertir la fecha al formato deseado
+                        fecha_str = row['fecha']
+                        try:
+                            # Intentar parsear la fecha ISO
+                            fecha_dt = datetime.fromisoformat(fecha_str)
+                            # Convertir a formato YYYY-MM-DD
+                            fecha_formatted = fecha_dt.date().isoformat()
+                        except ValueError:
+                            # Si falla, mantener la fecha original
+                            fecha_formatted = fecha_str
+
                         facturas_dict[factura_id] = {
                             'factura': int(row['factura']),
-                            'fecha': row['fecha'],
+                            'fecha': fecha_formatted,  # Usar la fecha formateada
                             'placa': row['placa'],
                             'categoria': row['categoria'],
                             'grupo': int(row['grupo']),

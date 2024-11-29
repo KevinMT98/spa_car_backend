@@ -4,6 +4,7 @@ from Core.Services.ReporteService import ReporteServices
 from utilidades.responses import error_response, success_response
 from typing import Optional
 from Core.Models.ReporteModel import ReporteFiltro
+import csv
 
 router = APIRouter()
 
@@ -43,8 +44,8 @@ async def reportes_por_cliente(
 ):
     """Obtener todas las facturas filtradas por cédula del cliente"""
     try:
-        # Obtener facturas por cédula del cliente
-        facturas = ReporteServices.get_all(cedula_cliente)
+        # Llamar al método específico para buscar por cliente
+        facturas = ReporteServices.get_all(id_cliente=cedula_cliente)
         
         # Verificar si hay un mensaje de error
         if isinstance(facturas, str) and "Error" in facturas:
@@ -63,14 +64,13 @@ async def reportes_por_cliente(
 
 @router.get("/medio_pago", tags=["Reportes"])
 async def reportes_por_medio_pago(
-    medio_pago: str = Query(..., description="Medio de pago")
+    medio_pago: str = Query(..., description="Medio de pago (TR/TD/TC/EF)")
 ):
     """Obtener todas las facturas filtradas por medio de pago"""
     try:
-        # Obtener facturas por medio de pago
-        facturas = ReporteServices.get_all(medio_pago)
+        # Obtener facturas por medio de pago usando el método específico
+        facturas = ReporteServices.get_by_medio_pago(medio_pago.upper())
         
-        # Verificar si hay un mensaje de error
         if isinstance(facturas, str) and "Error" in facturas:
             return error_response(
                 message=facturas,
@@ -92,7 +92,7 @@ async def reportes_por_numero_factura(
     """Obtener todas las facturas filtradas por número de factura"""
     try:
         # Obtener facturas por número de factura
-        facturas = ReporteServices.get_by_numero_factura(numero_factura)
+        facturas = ReporteServices.get_all(numero_factura)
         
         # Verificar si hay un mensaje de error
         if isinstance(facturas, str) and "Error" in facturas:
@@ -115,10 +115,9 @@ async def reportes_por_placa(
 ):
     """Obtener todas las facturas filtradas por número de placa"""
     try:
-        # Obtener facturas por número de placa
-        facturas = ReporteServices.get_all(placa)
+        # Llamar al método específico para buscar por placa
+        facturas = ReporteServices.get_by_placa(placa.upper())
         
-        # Verificar si hay un mensaje de error
         if isinstance(facturas, str) and "Error" in facturas:
             return error_response(
                 message=facturas,
@@ -162,4 +161,3 @@ async def resumen(
             message=f"Error en el servidor: {str(e)}",
             status_code=500
         )
-

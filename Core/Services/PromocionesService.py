@@ -1,5 +1,6 @@
 from Core.Models.PromocionesModel import PromocionesModel
 from utilidades import config
+from datetime import datetime
 import csv
 import os
 
@@ -23,9 +24,9 @@ class PromocionesService:
                 for row in reader:
                     promocion = PromocionesModel(
                         id_promocion=int(row['ID_PROMOCION']),
-                        descripcion=row['DESCRIPCION'],
-                        fecha_inicio=row['FECHA_INICIO'],
-                        fecha_fin=row['FECHA_FIN'],
+                        descripcion=row['DESCRIPCION'].capitalize(),
+                        fecha_inicio= datetime(row['FECHA_INICIO']).today().strftime('%Y-%m-%d'),
+                        fecha_fin=datetime(row['FECHA_FIN']).today().strftime('%Y-%m-%d'),
                         porcentaje=float(row['PORCENTAJE']),
                         estado=row['ESTADO'].lower() == 'true'
                     )
