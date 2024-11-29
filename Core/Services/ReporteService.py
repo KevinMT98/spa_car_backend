@@ -9,6 +9,8 @@ import pandas as pd
 from utilidades.config import FACTURAS_DB_PATH  # Asegúrate de importar la ruta del CSV
 
 class ReporteServices:
+    CATEGORIAS_DEFAULT = ["Moto", "Auto", "Cuatrimoto"]  # Añadir constante de categorías
+    
     @classmethod
     def _read_csv(cls):
         """Lee el archivo CSV de facturas y retorna un DataFrame"""
@@ -247,24 +249,40 @@ class ReporteServices:
         try:
             df = cls._read_csv()
             if isinstance(df, str):
-                return df
+                return {
+                    "status": "error",
+                    "code": 400,
+                    "message": df
+                }
 
+            # Convertir fechas y filtrar si se proporcionan fechas
             if fecha_inicio and fecha_fin:
-                mask = (pd.to_datetime(df['fecha']) >= pd.to_datetime(fecha_inicio)) & \
-                      (pd.to_datetime(df['fecha']) <= pd.to_datetime(fecha_fin))
+                df['fecha'] = pd.to_datetime(df['fecha'])
+                fecha_inicio_dt = pd.to_datetime(fecha_inicio)
+                fecha_fin_dt = pd.to_datetime(fecha_fin)
+                mask = (df['fecha'].dt.date >= fecha_inicio_dt.date()) & \
+                      (df['fecha'].dt.date <= fecha_fin_dt.date())
                 df = df[mask]
 
             if df.empty:
-                return {
+                empty_response = {
                     "fecha_inicio": fecha_inicio,
                     "fecha_fin": fecha_fin,
                     "total_ventas": 0,
                     "numero_facturas": 0,
-                    "ventas_medios_pago": [],
+                    "ventas_medios_pago": [
+                        {"medio_pago": mp, "total_ventas": 0, "numero_facturas": 0}
+                        for mp in ["TR", "TD", "TC", "EF"]
+                    ],
                     "ventas_diarias": []
                 }
+                return {
+                    "status": "success",
+                    "code": 200,
+                    "data": empty_response
+                }
 
-            # Convertir valores a tipos serializables
+            # Resumen general
             resumen = {
                 "fecha_inicio": fecha_inicio,
                 "fecha_fin": fecha_fin,
@@ -275,26 +293,36 @@ class ReporteServices:
             }
 
             # Ventas por medio de pago
-            medios_pago = df.groupby('medio_pago', as_index=False).agg({
+            medios_pago_base = {
+                "TR": {"total_ventas": 0, "numero_facturas": 0},
+                "TD": {"total_ventas": 0, "numero_facturas": 0},
+                "TC": {"total_ventas": 0, "numero_facturas": 0},
+                "EF": {"total_ventas": 0, "numero_facturas": 0}
+            }
+
+            medios_pago = df.groupby('medio_pago').agg({
                 'valor': 'sum',
                 'factura': 'nunique'
-            })
+            }).reset_index()
 
+            # Procesar cada medio de pago encontrado
+            for _, row in medios_pago.iterrows():
+                medio = row['medio_pago'][:2]  # Tomar solo los primeros 2 caracteres
+                if medio in medios_pago_base:
+                    medios_pago_base[medio] = {
+                        "total_ventas": float(row['valor']),
+                        "numero_facturas": int(row['factura'])
+                    }
+
+            # Convertir diccionario a lista manteniendo todos los medios de pago
             resumen["ventas_medios_pago"] = [
-                {
-                    "medio_pago": str(row['medio_pago']),
-                    "total_ventas": float(row['valor']),
-                    "numero_facturas": int(row['factura'])
-                }
-                for _, row in medios_pago.iterrows()
+                {"medio_pago": mp, **datos}
+                for mp, datos in medios_pago_base.items()
             ]
 
-            # Ventas diarias por categoría
-            dates = sorted(df['fecha'].unique())
-            categorias = sorted(df['categoria'].unique())
-
-            resumen["ventas_diarias"] = []
-            for fecha in dates:
+            # Ventas diarias con todas las categorías
+            fechas_unicas = sorted(df['fecha'].unique())
+            for fecha in fechas_unicas:
                 df_fecha = df[df['fecha'] == fecha]
                 ventas_diarias = {
                     "fecha": str(fecha),
@@ -303,24 +331,36 @@ class ReporteServices:
                     "categorias": []
                 }
 
-                for categoria in categorias:
-                    df_categoria = df_fecha[df_fecha['categoria'] == categoria]
-                    if not df_categoria.empty:
-                        ventas_diarias["categorias"].append({
-                            "categoria": str(categoria),
-                            "total_ventas": float(df_categoria['valor'].sum()),
-                            "numero_facturas": int(df_categoria['factura'].nunique())
-                        })
-                    else:
-                        ventas_diarias["categorias"].append({
-                            "categoria": str(categoria),
-                            "total_ventas": 0,
-                            "numero_facturas": 0
-                        })
+                # Inicializar todas las categorías en cero
+                categorias_dict = {cat: {"total_ventas": 0, "numero_facturas": 0} 
+                                 for cat in cls.CATEGORIAS_DEFAULT}
+
+                # Actualizar valores para categorías existentes
+                for categoria in cls.CATEGORIAS_DEFAULT:
+                    df_cat = df_fecha[df_fecha['categoria'] == categoria]
+                    if not df_cat.empty:
+                        categorias_dict[categoria] = {
+                            "total_ventas": float(df_cat['valor'].sum()),
+                            "numero_facturas": int(df_cat['factura'].nunique())
+                        }
+
+                # Convertir diccionario de categorías a lista
+                ventas_diarias["categorias"] = [
+                    {"categoria": cat, **datos}
+                    for cat, datos in categorias_dict.items()
+                ]
 
                 resumen["ventas_diarias"].append(ventas_diarias)
 
-            return resumen
-            
+            return {
+                "status": "success",
+                "code": 200,
+                "data": resumen
+            }
+
         except Exception as e:
-            return f"Error al procesar resumen: {str(e)}"
+            return {
+                "status": "error",
+                "code": 400,
+                "message": f"Error al procesar resumen: {str(e)}"
+            }
