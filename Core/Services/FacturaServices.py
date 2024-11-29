@@ -27,7 +27,7 @@ class FacturaServices:
             return cls.NUMERO_INICIAL_FACTURA
         
         try:
-            with open(FACTURAS_DB_PATH, 'r', newline='') as df:
+            with open(FACTURAS_DB_PATH, 'r', newline='', encoding="utf-8") as df:
                 reader = csv.DictReader(df, delimiter=';')
                 ids = set([int(row['factura']) for row in reader])  # Usar set para obtener números únicos
                 return max(ids) + 1 if ids else cls.NUMERO_INICIAL_FACTURA
@@ -131,7 +131,7 @@ class FacturaServices:
         try:
             # Leer registros existentes
             existing_rows = []
-            with open(FACTURAS_DB_PATH, 'r', newline='') as df:
+            with open(FACTURAS_DB_PATH, 'r', newline='', encoding="utf-8") as df:
                 reader = csv.DictReader(df, delimiter=';')
                 existing_rows = list(reader)
 
@@ -185,7 +185,7 @@ class FacturaServices:
                 raise ValueError("Factura no encontrada")
 
             # Leer todos los registros excepto los de la factura a actualizar
-            with open(FACTURAS_DB_PATH, 'r', newline='') as df:
+            with open(FACTURAS_DB_PATH, 'r', newline='', encoding="utf-8") as df:
                 reader = csv.DictReader(df, delimiter=';')
                 rows = [row for row in reader if int(row['factura']) != factura_id]
 
@@ -248,7 +248,7 @@ class FacturaServices:
         
         try:
             # Leer todas las filas excepto las que coinciden con factura_id
-            with open(FACTURAS_DB_PATH, 'r', newline='') as df:
+            with open(FACTURAS_DB_PATH, 'r', newline='', encoding="utf-8") as df:
                 reader = csv.DictReader(df, delimiter=';')
                 total_rows = 0
                 for row in reader:

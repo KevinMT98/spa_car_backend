@@ -17,13 +17,13 @@ class ServicioFactura(BaseModel):
         return v
 
 class Factura(BaseModel):
-    numero_factura: Optional[str]
+    numero_factura: Optional[int] = None
     fecha: datetime
     placa: str
     categoria: str
     grupo: int
     id_cliente: str 
-    medio_pago: str  # Cambiar alias para que coincida con CSV
+    medio_pago: str
     descuento: float = Field(default=0.0)
     vlr_descuento: float = Field(default=0.0)
     subtotal: float = Field(default=0.0)

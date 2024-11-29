@@ -1,11 +1,12 @@
 from pydantic import BaseModel, Field, field_validator
 from datetime import date, datetime
+from typing import Optional
 
 class PromocionesModel(BaseModel):
-    id_promocion: int
+    id_promocion: Optional[int] = None
     descripcion: str = Field(..., min_length=3, max_length=50)
-    fecha_inicio: date
-    fecha_fin: date
+    fecha_inicio: Optional[date] = None
+    fecha_fin: Optional[date] = None
     porcentaje: float
     estado: bool
 
@@ -17,6 +18,8 @@ class PromocionesModel(BaseModel):
 
     @field_validator('fecha_inicio', 'fecha_fin')
     def parse_fecha(cls, valor):
+        if valor is None:
+            return None
         if isinstance(valor, str):
             try:
                 return datetime.strptime(valor, "%Y-%m-%d").date()
@@ -53,4 +56,4 @@ class PromocionesModel(BaseModel):
         from_attributes = True
         populate_by_name = True
         validate_assignment = True
-       
+
