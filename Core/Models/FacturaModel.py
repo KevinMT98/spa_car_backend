@@ -17,7 +17,7 @@ class ServicioFactura(BaseModel):
         return v
 
 class Factura(BaseModel):
-    numero_factura: Optional[str]  # Hacerlo opcional para actualizaciones
+    numero_factura: Optional[str]
     fecha: datetime
     placa: str
     categoria: str

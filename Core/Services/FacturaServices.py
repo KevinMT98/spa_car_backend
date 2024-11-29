@@ -1,11 +1,11 @@
 import csv
 import os
 import json
-from datetime import datetime, timezone
-from Core.Models.FacturaModel import Factura, ServicioFactura
+from datetime import timezone
+from Core.Models.FacturaModel import Factura
 from utilidades.config import FACTURAS_DB_PATH
 
-class FacturaServices:  # Changed from FacturaTrade to FacturaServices
+class FacturaServices:
     lista = []
     COLUMNAS_CSV = [
         'factura', 'fecha', 'placa', 'categoria','grupo','cliente', 
